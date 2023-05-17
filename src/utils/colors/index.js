@@ -1,0 +1,23 @@
+export const colors = {
+  primary: '#0D367F',
+  secondary: '#D60B23',
+  tertiary: '#000000',
+  foourty: '#4D4D4D',
+  background: '#0090D4',
+  success: '#078422',
+  warning: '#F37120',
+  danger: '#FF0000',
+  black: 'black',
+  white: 'white',
+  border: '#A9A9A9',
+  placeholder: '#8D8D8D',
+  zavalabs: '#E7EBF2',
+  myicon: '#4090C9',
+  mybutton: '#1466BF',
+  myback: '#F5F5F5',
+  myback2: '#B1D4E0',
+  myback3: '#F4F6FF',
+  satu: '#25a5ee',
+  dua: '#43b867',
+  tiga: '#f4564b'
+};
