@@ -19,6 +19,8 @@ import Transaksi from './Transaksi';
 import Laporan from './Laporan';
 import Minimal from './Minimal';
 import Success from './Success';
+import PrinterBluetooth from './PrinterBluetooth';
+import LaporanDetail from './LaporanDetail';
 
 // produk
 
@@ -60,6 +62,8 @@ export {
   Success,
   Transaksi,
   Laporan,
-  Minimal
+  Minimal,
+  PrinterBluetooth,
+  LaporanDetail
 
 };

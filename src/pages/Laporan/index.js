@@ -7,7 +7,7 @@ import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-ha
 import { showMessage } from 'react-native-flash-message';
 import Sound from 'react-native-sound';
 import { Icon } from 'react-native-elements/dist/icons/Icon';
-import { MyButton, MyGap, MyInput, MyPicker } from '../../components';
+import { MyButton, MyGap, MyInput, MyPicker, MyCalendar } from '../../components';
 import { useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
 import { FloatingAction } from "react-native-floating-action";
@@ -24,7 +24,8 @@ export default function Laporan({ navigation }) {
     const [data, setData] = useState([]);
     const [tmp, setTemp] = useState([]);
     const [filter, setFilter] = useState({
-        key: 'nama_produk',
+        awal: moment().format('YYYY-MM-DD'),
+        akhir: moment().format('YYYY-MM-DD'),
     })
     useEffect(() => {
 
@@ -39,7 +40,8 @@ export default function Laporan({ navigation }) {
     const getTransaction = () => {
         getData('user').then(u => {
             axios.post(apiURL + 'transaksi', {
-                fid_user: u.id
+                fid_user: u.id,
+                level: u.level
             }).then(res => {
                 console.log(res.data);
                 setData(res.data);
@@ -50,9 +52,20 @@ export default function Laporan({ navigation }) {
 
     const filterData = () => {
 
+        getData('user').then(u => {
+            axios.post(apiURL + 'transaksi', {
+                fid_user: u.id,
+                level: u.level,
+                awal: filter.awal,
+                akhir: filter.akhir
+            }).then(res => {
+                console.log(res.data);
+                setData(res.data);
+                setTemp(res.data);
+            })
+        })
 
 
-        setModalVisible(false);
 
     }
 
@@ -60,7 +73,7 @@ export default function Laporan({ navigation }) {
     const __renderItem = ({ item }) => {
 
         return (
-            <TouchableOpacity onPress={() => navigation.navigate('ProdukDetail', item)} style={{
+            <TouchableOpacity onPress={() => navigation.navigate('LaporanDetail', item)} style={{
                 borderBottomWidth: 1,
                 borderBottomColor: colors.zavalabs,
                 backgroundColor: colors.white,
@@ -84,7 +97,7 @@ export default function Laporan({ navigation }) {
                             fontFamily: fonts.secondary[600],
                             fontSize: 14,
                             color: colors.black
-                        }}>{moment(item.tanggal).format('LL')}</Text>
+                        }}>{moment(item.tanggal).format('DD/MM/YYYY')}</Text>
 
                         <View style={{
                             backgroundColor: colors.success,
@@ -201,73 +214,45 @@ export default function Laporan({ navigation }) {
         }}>
 
 
+            <View style={{
+                flexDirection: 'row',
+                backgroundColor: colors.white,
+                padding: 5,
 
+            }}>
+                <View style={{
+                    flex: 1,
+                    paddingRight: 5,
+                }}>
+                    <MyCalendar value={filter.awal} label="Dari" iconname="calendar" onDateChange={x => {
+                        setFilter({
+                            ...filter,
+                            awal: x
+                        })
+                    }} />
+                </View>
+                <View style={{
+                    flex: 1,
+                    paddingLeft: 5,
+                }}>
+                    <MyCalendar value={filter.akhir} label="Sampai" iconname="calendar" onDateChange={x => {
+                        setFilter({
+                            ...filter,
+                            akhir: x
+                        })
+                    }} />
+                </View>
+                <View style={{
+                    flex: 0.5,
+                    justifyContent: 'flex-end', paddingLeft: 5,
+                }}>
+                    <MyButton onPress={filterData} title="Filter" warna={colors.primary} />
+                </View>
+            </View>
             <View style={{
                 flex: 1,
             }}>
-                {/* <View style={{
-                    flexDirection: 'row',
 
-                    borderRadius: 10,
-                    marginBottom: 10,
-                }}>
-                    <View style={{
-                        borderBottomLeftRadius: 10,
-                        borderTopLeftRadius: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        padding: 10,
-                        backgroundColor: colors.white,
-                    }}>
-                        <Icon type='ionicon' color={colors.border} size={20} name='search' />
-                    </View>
-                    <View style={{
-                        flex: 1,
-                        backgroundColor: colors.white,
-                        borderBottomRightRadius: 10,
-                        borderTopRightRadius: 10,
-                    }}>
-                        <TextInput placeholder='Cari Produk . . .' style={{
-                            fontFamily: fonts.secondary[400],
-                            fontSize: 18,
-                        }} onChangeText={x => {
-
-                            if (x.length == 0) {
-                                setData(tmp)
-                            } else {
-                                if (filter.key == 'nama_produk') {
-                                    const filtered = data.filter(i => i.nama_produk.toLowerCase().indexOf(x.toLowerCase()) > -1);
-                                    setData(filtered);
-                                } else if (filter.key == 'merek') {
-                                    console.log('merek')
-                                    const filtered = data.filter(i => i.merek.toLowerCase().indexOf(x.toLowerCase()) > -1);
-                                    setData(filtered);
-                                } else if (filter.key == 'motor_lainnya') {
-                                    const filtered = data.filter(i => i.motor_lainnya.toLowerCase().indexOf(x.toLowerCase()) > -1);
-                                    setData(filtered);
-                                }
-
-                            }
-
-
-
-                        }} />
-                    </View>
-                    <TouchableOpacity onPress={() => {
-                        setModalVisible(true)
-                    }} style={{
-                        borderBottomLeftRadius: 10,
-                        borderTopLeftRadius: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        padding: 10,
-                    }}>
-                        <Image source={require('../../assets/filter.png')} style={{
-                            width: 30,
-                            height: 30,
-                        }} />
-                    </TouchableOpacity>
-                </View> */}
                 <FlatList data={data} renderItem={__renderItem} />
             </View>
 

@@ -42,7 +42,7 @@ export default function MyButton({
 const styles = (warna, radius, borderSize, borderColor) =>
   StyleSheet.create({
     btn: {
-      height: 50,
+      height: 47,
       borderRadius: radius,
       justifyContent: 'center',
       alignItems: 'center',

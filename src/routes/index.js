@@ -23,6 +23,8 @@ import {
   Laporan,
   Minimal,
   Success,
+  PrinterBluetooth,
+  LaporanDetail,
 } from '../pages';
 import { colors } from '../utils';
 import { Icon } from 'react-native-elements';
@@ -283,6 +285,35 @@ export default function Router() {
         options={{
           headerShown: true,
           headerTitle: 'Edit Produk',
+          headerStyle: {
+            backgroundColor: colors.white,
+          },
+          headerTintColor: colors.black,
+        }}
+      />
+
+
+
+      <Stack.Screen
+        name="PrinterBluetooth"
+        component={PrinterBluetooth}
+        options={{
+          headerShown: true,
+          headerTitle: 'Pengaturan Printer',
+          headerStyle: {
+            backgroundColor: colors.white,
+          },
+          headerTintColor: colors.black,
+        }}
+      />
+
+
+      <Stack.Screen
+        name="LaporanDetail"
+        component={LaporanDetail}
+        options={{
+          headerShown: true,
+          headerTitle: 'Transaksi Detail',
           headerStyle: {
             backgroundColor: colors.white,
           },

@@ -20,9 +20,71 @@ import { Icon } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useIsFocused } from '@react-navigation/native';
 import axios from 'axios';
+import 'intl';
+import 'intl/locale-data/jsonp/en';
+import moment from 'moment';
+import { BluetoothEscposPrinter, BluetoothManager } from 'react-native-bluetooth-escpos-printer';
+import {
+    USBPrinter,
+    NetPrinter,
+    BLEPrinter,
+} from "react-native-thermal-receipt-printer";
+
+
 export default function Success({ navigation, route }) {
 
     const trx = route.params;
+    console.log(route.params);
+
+
+    const [paired, setPaired] = useState({});
+    const [data, setData] = useState({
+        detail: [],
+        header: {
+            tanggal: '',
+            jam: '',
+            kode: route.params.kode,
+            total: 0,
+            kembalian: 0,
+            bayar: 0
+        },
+        total: 0
+    });
+
+    useEffect(() => {
+        getData('paired').then(res => {
+            console.log(res);
+            if (!res) {
+                Alert.alert(MYAPP, 'Printer bluetooth belum dipilih !')
+            } else {
+                setPaired(res)
+            }
+
+        })
+        __getDetail();
+    }, []);
+
+
+    const __getDetail = () => {
+
+
+        axios.post(apiURL + 'transaksi_detail_print', {
+            fid_user: route.params.fid_user
+        }).then(res => {
+
+            console.log(res.data)
+            setData(res.data);
+
+
+
+        })
+
+
+
+
+    }
+
+
 
     return (
         <SafeAreaView style={{
@@ -120,7 +182,141 @@ export default function Success({ navigation, route }) {
                 // flex: 0.4,
                 margin: 10,
             }}>
-                <MyButton warna='transparent' borderSize={1} title="Cetak Struk" colorText={colors.primary} iconColor={colors.primary} Icons='print' />
+                <MyButton warna='transparent' borderSize={1}
+
+                    onPress={async () => {
+                        BluetoothManager.connect(paired.inner_mac_address)
+                            .then(async (s) => {
+                                console.log(s);
+                                let columnWidths = [8, 20, 20];
+                                try {
+
+                                    // await BluetoothEscposPrinter.printPic(logoCetak, { width: 250, left: 150 });
+                                    await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
+                                    await BluetoothEscposPrinter.printColumn(
+                                        [15],
+                                        [BluetoothEscposPrinter.ALIGN.CENTER],
+                                        ['HM Motor'],
+                                        {
+                                            encoding: 'GBK',
+                                            codepage: 0,
+                                            widthtimes: 2,
+                                            heigthtimes: 1,
+                                            fonttype: 1
+                                        },
+                                    );
+
+                                    await BluetoothEscposPrinter.printColumn(
+                                        [32],
+                                        [BluetoothEscposPrinter.ALIGN.CENTER],
+                                        ['Banjarbaru, Kalimantan Selatan'],
+                                        {},
+                                    );
+                                    await BluetoothEscposPrinter.printColumn(
+                                        [32],
+                                        [BluetoothEscposPrinter.ALIGN.CENTER],
+                                        ['Tlp +6285715514097'],
+                                        {},
+                                    );
+                                    await BluetoothEscposPrinter.printText(
+                                        '-------------------------------\r\n',
+                                        {},
+                                    );
+                                    await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.LEFT);
+                                    await BluetoothEscposPrinter.printText(
+                                        `${moment(data.header.tanggal + ' ' + data.header.jam).format('DD/MM/YYYY HH:mm:ss')} WIB\r\n`,
+                                        {},
+                                    );
+                                    await BluetoothEscposPrinter.printColumn(
+                                        [15, 17],
+                                        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                                        ['No. Transaksi', `${moment(data.header.tanggal + ' ' + data.header.jam).format('YYMMDDHHmmss')}`],
+                                        {},
+                                    );
+
+                                    await BluetoothEscposPrinter.printText(
+                                        '-------------------------------\r\n',
+                                        {},
+                                    );
+
+                                    // loopiong
+
+                                    data.detail.map(i => {
+                                        BluetoothEscposPrinter.printColumn(
+                                            [15, 17],
+                                            [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                                            [`${i.nama_produk}`, `Rp. ${new Intl.NumberFormat().format(i.total)}`],
+                                            {},
+                                        );
+                                        BluetoothEscposPrinter.printColumn(
+                                            [23, 12],
+                                            [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                                            [`${new Intl.NumberFormat().format(i.harga)} x ${i.qty}`,
+                                                ``
+                                            ],
+                                            {
+                                                fonttype: 3,
+                                            },
+                                        );
+                                    })
+
+                                    await BluetoothEscposPrinter.printText(
+                                        '-------------------------------\r\n',
+                                        {},
+                                    );
+                                    await BluetoothEscposPrinter.printColumn(
+                                        [15, 17],
+                                        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                                        ['Bayar', `Rp. ${new Intl.NumberFormat().format(data.header.bayar)}`],
+                                        {},
+                                    );
+                                    await BluetoothEscposPrinter.printColumn(
+                                        [15, 17],
+                                        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                                        ['Kembalian', `Rp. ${new Intl.NumberFormat().format(data.header.kembalian)}`],
+                                        {},
+                                    );
+                                    await BluetoothEscposPrinter.printColumn(
+                                        [15, 17],
+                                        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                                        ['Transaksi', `Rp. ${new Intl.NumberFormat().format(data.header.total)}`],
+                                        {},
+                                    );
+                                    await BluetoothEscposPrinter.printText(
+                                        '\r\n',
+                                        {},
+                                    );
+
+                                    await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
+                                    await BluetoothEscposPrinter.printQRCode(
+                                        `${data.header.kode}}`,
+                                        280,
+                                        BluetoothEscposPrinter.ERROR_CORRECTION.L,
+                                    );
+
+                                    await BluetoothEscposPrinter.printText(
+                                        '\r\n\r\n',
+                                        {},
+                                    );
+
+
+
+                                } catch (e) {
+                                    alert(e.message || 'ERROR');
+                                }
+
+
+
+                            }, (e) => {
+
+                                alert(e);
+                            })
+
+                    }}
+
+
+
+                    title="Cetak Struk" colorText={colors.primary} iconColor={colors.primary} Icons='print' />
                 <MyGap jarak={10} />
                 <MyButton title="Mulai Transaksi Baru" Icons='cart' onPress={() => navigation.replace('Transaksi')} />
             </View>
