@@ -4,6 +4,7 @@ import { Icon, ListItem, Button } from 'react-native-elements';
 import { colors } from '../../utils/colors';
 import { fonts } from '../../utils/fonts';
 import { TextInput } from 'react-native-gesture-handler';
+import CurrencyInput from 'react-native-currency-input';
 
 export default function MyInput({
   onFocus,
@@ -16,6 +17,7 @@ export default function MyInput({
   maxLength,
   iconname,
   onChangeText,
+  uang = false,
   value,
   borderWidth = 0,
   textColor = colors.black,
@@ -32,48 +34,37 @@ export default function MyInput({
 
   const [tutup, setTutup] = useState(true);
   return (
+
+
     <View style={{
 
     }}>
-
-      <View
-        style={{
-
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingVertical: !nolabel ? 5 : 0,
-        }}>
-        {icon && !nolabel && <Icon type="ionicon" name={iconname} color={colorIcon} size={16} />}
-
-
-        {!nolabel && <Text
+      {uang && <>
+        <View
           style={{
-            fontFamily: fonts.secondary[600],
-            color: textColor,
-            left: icon ? 10 : 5,
-            fontSize: 12,
-            ...styleLabel,
-          }}>
-          {label}
-        </Text>}
-      </View>
-      <View style={{
-        position: 'relative'
-      }}>
-        <TextInput
-          editable={editable}
-          placeholderTextColor={colors.placeholder}
-          maxLength={maxLength}
-          multiline={multiline}
-          autoFocus={autoFocus}
-          onFocus={onFocus}
-          placeholder={placeholder}
-          secureTextEntry={secureTextEntry ? tutup : false}
-          keyboardType={keyboardType}
 
-          value={value}
-          onChangeText={onChangeText}
-          autoCapitalize="none"
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingVertical: !nolabel ? 5 : 0,
+          }}>
+          {icon && !nolabel && <Icon type="ionicon" name={iconname} color={colorIcon} size={16} />}
+
+
+          {!nolabel && <Text
+            style={{
+              fontFamily: fonts.secondary[600],
+              color: textColor,
+              left: icon ? 10 : 5,
+              fontSize: 12,
+              ...styleLabel,
+            }}>
+            {label}
+          </Text>}
+        </View>
+
+        <CurrencyInput
+          placeholderTextColor={colors.placeholder}
+          placeholder={placeholder}
           style={{
             backgroundColor: backgroundColor,
             borderColor: borderColor,
@@ -83,28 +74,92 @@ export default function MyInput({
             color: colors.black,
             fontSize: 12,
             fontFamily: fonts.primary[400],
-            ...styleInput,
           }}
+          value={value}
+          // onChangeValue={setValue}
+          delimiter=","
+          separator="."
+          precision={0}
+          minValue={0}
+
+          onChangeValue={onChangeText}
         />
-        {secureTextEntry &&
-          <TouchableOpacity onPress={() => {
-            if (tutup) {
-              setTutup(false);
-            } else {
-              setTutup(true);
-            }
-          }} style={{
-            position: 'absolute',
-            right: 0,
-            bottom: 0,
-            paddingHorizontal: 20,
-            justifyContent: 'center',
+
+
+      </>}
+
+      {!uang && <>
+
+        <View
+          style={{
+
+            flexDirection: 'row',
             alignItems: 'center',
-            height: '100%'
+            paddingVertical: !nolabel ? 5 : 0,
           }}>
-            <Icon type="ionicon" name={!tutup ? 'eye-off' : 'eye'} color={colorIcon} size={18} />
-          </TouchableOpacity>}
-      </View>
+          {icon && !nolabel && <Icon type="ionicon" name={iconname} color={colorIcon} size={16} />}
+
+
+          {!nolabel && <Text
+            style={{
+              fontFamily: fonts.secondary[600],
+              color: textColor,
+              left: icon ? 10 : 5,
+              fontSize: 12,
+              ...styleLabel,
+            }}>
+            {label}
+          </Text>}
+        </View>
+        <View style={{
+          position: 'relative'
+        }}>
+          <TextInput
+            editable={editable}
+            placeholderTextColor={colors.placeholder}
+            maxLength={maxLength}
+            multiline={multiline}
+            autoFocus={autoFocus}
+            onFocus={onFocus}
+            placeholder={placeholder}
+            secureTextEntry={secureTextEntry ? tutup : false}
+            keyboardType={keyboardType}
+
+            value={value}
+            onChangeText={onChangeText}
+            autoCapitalize="none"
+            style={{
+              backgroundColor: backgroundColor,
+              borderColor: borderColor,
+              borderRadius: 10,
+              borderWidth: borderWidth,
+              paddingLeft: 10,
+              color: colors.black,
+              fontSize: 12,
+              fontFamily: fonts.primary[400],
+              ...styleInput,
+            }}
+          />
+          {secureTextEntry &&
+            <TouchableOpacity onPress={() => {
+              if (tutup) {
+                setTutup(false);
+              } else {
+                setTutup(true);
+              }
+            }} style={{
+              position: 'absolute',
+              right: 0,
+              bottom: 0,
+              paddingHorizontal: 20,
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%'
+            }}>
+              <Icon type="ionicon" name={!tutup ? 'eye-off' : 'eye'} color={colorIcon} size={18} />
+            </TouchableOpacity>}
+        </View>
+      </>}
 
     </View>
   );

@@ -102,10 +102,16 @@ export default function Home({ navigation }) {
           flexDirection: 'row',
           justifyContent: 'space-around'
         }}>
-          <TouchableOpacity onPress={() => navigation.navigate('Produk')} style={{
+          <TouchableOpacity onPress={() => {
+            if (user.level == 'Admin' || user.level == 'Crew') {
+              navigation.navigate('Produk')
+            } else {
+              Alert.alert(MYAPP, 'Menu ini hanya untuk Admin')
+            }
+          }} style={{
             width: windowWidth / 3,
             borderRadius: 10,
-            elevation: 1,
+            backgroundColor: user.level == 'Admin' || user.level == 'Crew' ? colors.white : colors.border,
             borderWidth: 1,
             borderColor: colors.zavalabs,
             padding: 10,
@@ -126,16 +132,25 @@ export default function Home({ navigation }) {
             }}>Kelola{'\n'}Produk</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.navigate('Pengguna')} style={{
-            width: windowWidth / 3,
-            borderRadius: 10,
-            elevation: 1,
-            borderWidth: 1,
-            borderColor: colors.zavalabs,
-            padding: 10,
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}>
+          <TouchableOpacity
+
+            onPress={() => {
+              if (user.level == 'Admin') {
+                navigation.navigate('Pengguna')
+              } else {
+                Alert.alert(MYAPP, 'Menu ini hanya untuk Admin')
+              }
+            }}
+            style={{
+              width: windowWidth / 3,
+              borderRadius: 10,
+              borderWidth: 1,
+              backgroundColor: user.level == 'Admin' ? colors.white : colors.border,
+              borderColor: colors.zavalabs,
+              padding: 10,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}>
             <Image source={require('../../assets/A2.png')} style={{
               width: 80,
               height: 80,
@@ -155,10 +170,16 @@ export default function Home({ navigation }) {
           flexDirection: 'row',
           justifyContent: 'space-around'
         }}>
-          <TouchableOpacity onPress={() => navigation.navigate('Laporan')} style={{
+          <TouchableOpacity onPress={() => {
+            if (user.level == 'Admin') {
+              navigation.navigate('Laporan')
+            } else {
+              Alert.alert(MYAPP, 'Menu ini hanya untuk Admin')
+            }
+          }} style={{
             width: windowWidth / 3,
             borderRadius: 10,
-            elevation: 1,
+            backgroundColor: user.level == 'Admin' ? colors.white : colors.border,
             borderWidth: 1,
             borderColor: colors.zavalabs,
             padding: 10,
@@ -182,7 +203,6 @@ export default function Home({ navigation }) {
           <TouchableOpacity onPress={() => navigation.navigate('Transaksi')} style={{
             width: windowWidth / 3,
             borderRadius: 10,
-            elevation: 1,
             borderWidth: 1,
             borderColor: colors.zavalabs,
             padding: 10,

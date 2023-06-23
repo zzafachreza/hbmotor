@@ -419,7 +419,7 @@ export default function Transaksi({ navigation, route }) {
                     backgroundColor: '#000000BF'
                 }}>
                     <View style={{
-                        height: windowHeight / 2.5,
+                        height: windowHeight / 2,
                         backgroundColor: colors.white,
                         // padding: 10
                     }}>
@@ -444,6 +444,39 @@ export default function Transaksi({ navigation, route }) {
                                 fontFamily: fonts.secondary[400],
                                 fontSize: 20
                             }}>Stok : {pilih.stok}</Text>
+
+                            <MyPicker onValueChange={x => {
+
+                                if (x == 'Umum') {
+                                    setPilih({
+                                        ...pilih,
+                                        harga_jual: pilih.harga_jual_tmp
+                                    })
+                                } else if (x == 'Silver') {
+                                    setPilih({
+                                        ...pilih,
+                                        harga_jual: pilih.harga_silver
+                                    })
+                                } else if (x == 'Gold') {
+                                    setPilih({
+                                        ...pilih,
+                                        harga_jual: pilih.harga_gold
+                                    })
+                                } else if (x == 'Platinum') {
+                                    setPilih({
+                                        ...pilih,
+                                        harga_jual: pilih.harga_platinum
+                                    })
+                                }
+
+                            }} label="Jenis Harga" iconname="options" data={[
+                                { label: 'Umum', value: 'Umum' },
+                                { label: 'Silver', value: 'Silver' },
+                                { label: 'Gold', value: 'Gold' },
+                                { label: 'Platinum', value: 'Platinum' },
+
+                            ]} />
+
                             <Text style={{
                                 fontFamily: fonts.secondary[400],
                                 fontSize: 20,

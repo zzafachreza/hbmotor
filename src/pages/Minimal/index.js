@@ -168,6 +168,28 @@ export default function Minimal({ navigation }) {
                                     color: colors.foourty
                                 }}>{new Intl.NumberFormat().format(item.harga_jual)}</Text>
                             </View>
+                            <View style={{
+                                flexDirection: 'row'
+                            }}>
+                                <Text style={{
+                                    fontFamily: fonts.secondary[400],
+                                    fontSize: 12,
+                                    color: colors.foourty,
+                                    flex: 0.4,
+                                }}>Lokasi</Text>
+                                <Text style={{
+                                    fontFamily: fonts.secondary[400],
+                                    fontSize: 12,
+                                    color: colors.foourty,
+                                    flex: 0.2,
+                                }}>:</Text>
+                                <Text style={{
+                                    flex: 1,
+                                    fontFamily: fonts.secondary[600],
+                                    fontSize: 12,
+                                    color: colors.foourty
+                                }}>{item.lokasi}</Text>
+                            </View>
                         </View>
 
                         <View style={{
