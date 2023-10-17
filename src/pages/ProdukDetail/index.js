@@ -86,7 +86,7 @@ export default function ProdukDetail({ navigation, route }) {
                         <MYlistdata label="Harga Jual" value={new Intl.NumberFormat().format(data.harga_jual)} />
                         <MYlistdata label="Merek" value={data.merek} />
                         <MYlistdata label="Persamaan Motor Lainnya" value={data.motor_lainnya} />
-                        <MYlistdata label="Lokasi" value={data.motor_lainnya} />
+                        <MYlistdata label="Lokasi" value={data.lokasi} />
                     </View>
 
                     <View style={{

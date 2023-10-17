@@ -169,7 +169,7 @@ export default function Success({ navigation, route }) {
                             flex: 1,
                             fontFamily: fonts.secondary[400],
                             fontSize: 20,
-                        }}>Total Tagihan</Text>
+                        }}>Kembalian</Text>
                         <Text style={{
                             fontFamily: fonts.secondary[600],
                             fontSize: 20,
@@ -233,6 +233,12 @@ export default function Success({ navigation, route }) {
                                         ['No. Transaksi', `${moment(data.header.tanggal + ' ' + data.header.jam).format('YYMMDDHHmmss')}`],
                                         {},
                                     );
+                                    await BluetoothEscposPrinter.printColumn(
+                                        [15, 17],
+                                        [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                                        ['Pembayaran', `${data.header.pembayaran}`],
+                                        {},
+                                    );
 
                                     await BluetoothEscposPrinter.printText(
                                         '-------------------------------\r\n',
@@ -288,11 +294,7 @@ export default function Success({ navigation, route }) {
                                     );
 
                                     await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
-                                    await BluetoothEscposPrinter.printQRCode(
-                                        `${data.header.kode}}`,
-                                        280,
-                                        BluetoothEscposPrinter.ERROR_CORRECTION.L,
-                                    );
+
 
                                     await BluetoothEscposPrinter.printText(
                                         '\r\n\r\n',

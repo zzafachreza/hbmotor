@@ -274,6 +274,13 @@ export default function LaporanDetail({ navigation, route }) {
                                             {},
                                         );
 
+                                        await BluetoothEscposPrinter.printColumn(
+                                            [15, 17],
+                                            [BluetoothEscposPrinter.ALIGN.LEFT, BluetoothEscposPrinter.ALIGN.RIGHT],
+                                            ['Pembayaran', `${data.header.pembayaran}`],
+                                            {},
+                                        );
+
                                         await BluetoothEscposPrinter.printText(
                                             '-------------------------------\r\n',
                                             {},
@@ -328,11 +335,7 @@ export default function LaporanDetail({ navigation, route }) {
                                         );
 
                                         await BluetoothEscposPrinter.printerAlign(BluetoothEscposPrinter.ALIGN.CENTER);
-                                        await BluetoothEscposPrinter.printQRCode(
-                                            `${data.header.kode}}`,
-                                            280,
-                                            BluetoothEscposPrinter.ERROR_CORRECTION.L,
-                                        );
+
 
                                         await BluetoothEscposPrinter.printText(
                                             '\r\n\r\n',
@@ -353,6 +356,29 @@ export default function LaporanDetail({ navigation, route }) {
                                 })
 
                         }} warna={colors.primary} title="Print Struk" Icons="print" />
+                    <MyGap jarak={20} />
+                    <MyButton onPress={() => {
+                        Alert.alert(MYAPP, 'Apakah kamu yakin akan hapus ini ? ( Stok akan kembali bertambah terhadap produk yang di transaksikan )',
+                            [
+                                {
+                                    text: 'BATAL'
+                                },
+                                {
+                                    text: 'HAPUS',
+                                    onPress: () => {
+                                        axios.post(apiURL + 'transaksi_delete', {
+                                            kode: data.header.kode
+                                        }).then(res => {
+                                            console.log(res.data)
+                                        }).finally(() => {
+                                            navigation.goBack();
+                                            alert('Transaksi Berhasil di hapus !')
+                                        })
+                                    }
+                                }
+                            ]
+                        )
+                    }} warna={colors.danger} title="Hapus Transaksi" Icons="trash" />
 
 
                 </View>}

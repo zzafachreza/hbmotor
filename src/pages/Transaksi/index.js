@@ -10,6 +10,7 @@ import {
     ActivityIndicator,
     ScrollView,
     Modal,
+    Picker,
     TextInput,
 } from 'react-native';
 import { windowWidth, fonts, windowHeight } from '../../utils/fonts';
@@ -23,6 +24,7 @@ import axios from 'axios';
 import { showMessage } from 'react-native-flash-message';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import ZavalabsScanner from 'react-native-zavalabs-scanner'
+import CurrencyInput from 'react-native-currency-input';
 export default function Transaksi({ navigation, route }) {
 
     const [pilih, setPilih] = useState({});
@@ -35,9 +37,12 @@ export default function Transaksi({ navigation, route }) {
     const [user, setUser] = useState({});
     const sendServer = () => {
 
-        if (pilih.qty == null) {
-            Alert.alert(MYAPP, 'Jumlah harus di isi !')
+        console.log(pilih)
 
+        if (!pilih.qty) {
+            Alert.alert(MYAPP, 'Jumlah harus di isi !')
+        } else if (parseInt(pilih.qty) > parseInt(pilih.stok)) {
+            Alert.alert(MYAPP, `Stok tidak cukup maksimal ${pilih.stok}`)
         } else {
             setModalVisible(false);
             const send = {
@@ -54,12 +59,15 @@ export default function Transaksi({ navigation, route }) {
             })
         }
 
+
+
     };
 
     const [trx, setTrx] = useState({
         total: 0,
-        bayar: 0,
-        kembalian: 0
+        bayar: '',
+        kembalian: 0,
+        pembayaran: 'CASH'
     })
 
     const [cart, setCart] = useState([])
@@ -239,83 +247,85 @@ export default function Transaksi({ navigation, route }) {
                 flex: 1,
                 padding: 10,
             }}>
-                {cart.map(c => {
-                    return (
-                        <View style={{
-                            marginBottom: 10,
-                            backgroundColor: colors.white,
-                            borderRadius: 10,
-                            overflow: 'hidden',
-                            flexDirection: 'row'
-                        }}>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    {cart.map(c => {
+                        return (
                             <View style={{
-                                flex: 1,
-                                padding: 10,
+                                marginBottom: 10,
+                                backgroundColor: colors.white,
+                                borderRadius: 10,
+                                overflow: 'hidden',
+                                flexDirection: 'row'
                             }}>
-                                <Text style={{
-                                    fontFamily: fonts.secondary[600]
-                                }}>{c.nama_produk}</Text>
                                 <View style={{
-                                    flexDirection: 'row'
+                                    flex: 1,
+                                    padding: 10,
                                 }}>
+                                    <Text style={{
+                                        fontFamily: fonts.secondary[600]
+                                    }}>{c.nama_produk}</Text>
                                     <View style={{
-                                        flex: 1,
+                                        flexDirection: 'row'
                                     }}>
-                                        <Text style={{
-                                            fontFamily: fonts.secondary[400]
-                                        }}>Merek : {c.merek}</Text>
-                                        <Text style={{
-                                            fontFamily: fonts.secondary[400]
-                                        }}>Motor : {c.motor_lainnya}</Text>
+                                        <View style={{
+                                            flex: 1,
+                                        }}>
+                                            <Text style={{
+                                                fontFamily: fonts.secondary[400]
+                                            }}>Merek : {c.merek}</Text>
+                                            <Text style={{
+                                                fontFamily: fonts.secondary[400]
+                                            }}>Motor : {c.motor_lainnya}</Text>
+                                        </View>
+                                        <View style={{
+                                            flex: 1,
+                                        }}>
+                                            <Text style={{
+                                                fontFamily: fonts.secondary[400]
+                                            }}>@{new Intl.NumberFormat().format(c.harga)} x {c.qty}</Text>
+                                            <Text style={{
+                                                fontFamily: fonts.secondary[600],
+                                                fontSize: 20,
+                                            }}>{new Intl.NumberFormat().format(c.total)}</Text>
+                                        </View>
                                     </View>
-                                    <View style={{
-                                        flex: 1,
-                                    }}>
-                                        <Text style={{
-                                            fontFamily: fonts.secondary[400]
-                                        }}>@{new Intl.NumberFormat().format(c.harga)} x {c.qty}</Text>
-                                        <Text style={{
-                                            fontFamily: fonts.secondary[600],
-                                            fontSize: 20,
-                                        }}>{new Intl.NumberFormat().format(c.total)}</Text>
-                                    </View>
+
                                 </View>
-
-                            </View>
-                            <TouchableOpacity onPress={() => {
-                                Alert.alert(MYAPP, 'Hapus item ini ?', [
-                                    { text: 'TIDAK' },
-                                    {
-                                        text: 'HAPUS',
-                                        onPress: () => {
-                                            console.log(c.id)
-                                            axios.post(apiURL + 'cart_hapus', {
-                                                id: c.id
-                                            }).then(r => {
-                                                console.log(r.data)
-                                                showMessage({
-                                                    message: 'Item berhasil di hapus',
-                                                    type: 'success'
+                                <TouchableOpacity onPress={() => {
+                                    Alert.alert(MYAPP, 'Hapus item ini ?', [
+                                        { text: 'TIDAK' },
+                                        {
+                                            text: 'HAPUS',
+                                            onPress: () => {
+                                                console.log(c.id)
+                                                axios.post(apiURL + 'cart_hapus', {
+                                                    id: c.id
+                                                }).then(r => {
+                                                    console.log(r.data)
+                                                    showMessage({
+                                                        message: 'Item berhasil di hapus',
+                                                        type: 'success'
+                                                    })
+                                                    __getCart();
                                                 })
-                                                __getCart();
-                                            })
+                                            }
                                         }
-                                    }
-                                ])
-                            }} style={{
-                                flex: 1,
-                                width: 50,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                backgroundColor: colors.danger,
+                                    ])
+                                }} style={{
+                                    flex: 1,
+                                    width: 50,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    backgroundColor: colors.danger,
 
-                            }}>
-                                <Icon type='ionicon' name='trash' color={colors.white} />
-                            </TouchableOpacity>
-                        </View>
-                    )
+                                }}>
+                                    <Icon type='ionicon' name='trash' color={colors.white} />
+                                </TouchableOpacity>
+                            </View>
+                        )
 
-                })}
+                    })}
+                </ScrollView>
             </View>
             <View style={{
                 flex: 0.2,
@@ -364,9 +374,70 @@ export default function Transaksi({ navigation, route }) {
                 flexDirection: 'row'
             }}>
                 <View style={{
+                    flex: 0.8,
+                    paddingRight: 5,
+                }}>
+
+                    <View style={{
+                        backgroundColor: colors.white,
+                        borderRadius: 10,
+
+                        fontFamily: fonts.secondary[600],
+                        borderColor: colors.primary,
+                    }}>
+                        <Picker style={{ height: 50, transform: [{ scale: 0.9 }] }}
+                            selectedValue={trx.pembayaran} onValueChange={x => {
+                                if (x == 'CASH') {
+                                    setTrx({
+                                        ...trx,
+                                        pembayaran: x,
+                                        bayar: 0,
+
+                                    })
+                                } else {
+                                    console.log(x)
+                                    setTrx({
+                                        ...trx,
+                                        pembayaran: x,
+                                        bayar: trx.total,
+                                        kembalian: 0
+                                    })
+                                }
+
+                            }}>
+
+                            <Picker.Item textStyle={{ fontSize: 12 }} value="CASH" label="CASH" />
+                            <Picker.Item textStyle={{ fontSize: 12 }} value="TRANSFER" label="TRANSFER" />
+                            <Picker.Item textStyle={{ fontSize: 12 }} value="QRIS" label="QRIS" />
+
+                        </Picker>
+                    </View>
+                </View>
+                <View style={{
                     flex: 1,
                 }}>
-                    <TextInput value={trx.bayar} onChangeText={x => {
+
+                    {/* <CurrencyInput
+                        onChangeText={(formattedValue) => {
+                            console.log(formattedValue); // R$ +2.310,46
+                        }}
+                        placeholderTextColor={colors.placeholder}
+                        style={{
+                            backgroundColor: colors.white,
+                            borderRadius: 10,
+                            paddingLeft: 10,
+                            color: colors.black,
+                            fontSize: 12,
+                            fontFamily: fonts.primary[400],
+                        }}
+
+                    /> */}
+
+
+
+
+                    <TextInput value={trx.bayar.toString()} onChangeText={x => {
+                        console.log(x)
                         setTrx({
                             ...trx,
                             bayar: x,
