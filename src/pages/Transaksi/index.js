@@ -232,9 +232,15 @@ export default function Transaksi({ navigation, route }) {
                                 marginVertical: 5,
                                 flexDirection: 'row'
                             }}>
-                                <Text style={{
+                                <View style={{
                                     flex: 1,
-                                }}>{i.nama_produk}</Text>
+                                }}>
+                                    <Text >{i.nama_produk}</Text>
+                                    <Text style={{
+                                        fontFamily: fonts.secondary[400],
+                                        fontSize: 10,
+                                    }}>{i.motor_lainnya}</Text>
+                                </View>
                                 <Text>Stok : {i.stok}</Text>
                             </TouchableOpacity>
                         )
