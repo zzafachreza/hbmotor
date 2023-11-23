@@ -130,7 +130,7 @@ export default function ProdukAdd({ navigation, route }) {
                     <MyInput label="Nama Persamaan Motor Lainnya" iconname="pricetag" placeholder="Masukan harga jual" value={kirim.motor_lainnya} onChangeText={x => setKirim({ ...kirim, motor_lainnya: x })} />
 
                     <MyGap jarak={10} />
-                    <MyInput label="Lokasi" iconname="location" placeholder="Masukan lokasi" value={kirim.lokasi} onChangeText={x => setKirim({ ...kirim, motor_lainnya: x })} />
+                    <MyInput label="Lokasi" iconname="location" placeholder="Masukan lokasi" value={kirim.lokasi} onChangeText={x => setKirim({ ...kirim, lokasi: x })} />
 
                 </View>
 

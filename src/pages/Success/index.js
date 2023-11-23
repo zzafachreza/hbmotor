@@ -29,11 +29,13 @@ import {
     NetPrinter,
     BLEPrinter,
 } from "react-native-thermal-receipt-printer";
+import { FlatList } from 'react-native';
 
 
 export default function Success({ navigation, route }) {
 
-    const trx = route.params;
+    const trx = route.params.trx;
+    const cart = route.params.cart;
     console.log(route.params);
 
 
@@ -75,12 +77,40 @@ export default function Success({ navigation, route }) {
             console.log(res.data)
             setData(res.data);
 
-
-
         })
 
+    }
 
 
+    const __renderItem = ({ item }) => {
+
+        return (
+            <View style={{
+                marginHorizontal: 10,
+                // borderBottomWidth: 1,
+                // borderBottomWidth: colors.border,
+                marginVertical: 5,
+                flexDirection: 'row',
+                alignItems: 'center'
+            }}>
+                <View style={{
+                    flex: 1,
+                }}>
+                    <Text style={{
+                        fontFamily: fonts.secondary[600],
+                        fontSize: 12,
+                    }}>{item.nama_produk}</Text>
+                    <Text style={{
+                        fontFamily: fonts.secondary[600],
+                        fontSize: 12,
+                    }}>{item.qty} x {new Intl.NumberFormat().format(item.harga)}</Text>
+                </View>
+                <Text style={{
+                    fontFamily: fonts.secondary[600],
+                    fontSize: 15,
+                }}>Rp {new Intl.NumberFormat().format(item.harga * item.qty)}</Text>
+            </View>
+        )
 
     }
 
@@ -99,13 +129,13 @@ export default function Success({ navigation, route }) {
                 borderRadius: 10,
             }}>
                 <View style={{
-                    flex: 1,
+                    flex: 0.5,
                     justifyContent: 'center',
                     alignItems: 'center'
                 }}>
                     <Image source={require('../../assets/ok.png')} style={{
-                        width: 150,
-                        height: 150,
+                        width: 80,
+                        height: 80,
                         marginBottom: 10,
                     }} />
                     <Text style={{
@@ -113,6 +143,8 @@ export default function Success({ navigation, route }) {
                         fontSize: 20,
                     }}>Transaksi Berhasil !</Text>
                 </View>
+                <FlatList data={cart} renderItem={__renderItem} />
+
                 <View style={{
                     flex: 0.5,
                     paddingHorizontal: 20,

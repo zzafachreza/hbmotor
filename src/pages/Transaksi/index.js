@@ -24,8 +24,16 @@ import axios from 'axios';
 import { showMessage } from 'react-native-flash-message';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import ZavalabsScanner from 'react-native-zavalabs-scanner'
-import CurrencyInput from 'react-native-currency-input';
+import { CurrencyInput, formatNumber, FakeCurrencyInput } from 'react-native-currency-input';
+import { TouchableWithoutFeedback } from 'react-native';
+import NumberFormat from 'react-number-format';
 export default function Transaksi({ navigation, route }) {
+
+    const [BAYAR, setBAYAR] = useState(0);
+
+    const currencyFormat = (num) => {
+        return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    }
 
     const [pilih, setPilih] = useState({});
     const [modalVisible, setModalVisible] = useState(false);
@@ -111,7 +119,10 @@ export default function Transaksi({ navigation, route }) {
                         axios.post(apiURL + "transaksi_add", trx).then(res => {
 
                             console.log('trx', res.data);
-                            navigation.replace('Success', trx)
+                            navigation.replace('Success', {
+                                trx: trx,
+                                cart: cart
+                            })
                         })
                     }, 1000)
                 }
@@ -155,7 +166,7 @@ export default function Transaksi({ navigation, route }) {
                         height: 18,
                     }} />
                 </TouchableOpacity>
-                <View style={{ flex: 1, }}>
+                <View style={{ flex: 1, position: 'relative' }}>
                     <TextInput placeholder='Cari Produk' style={{
                         fontFamily: fonts.secondary[600],
                         backgroundColor: colors.white,
@@ -172,6 +183,21 @@ export default function Transaksi({ navigation, route }) {
                         }
 
                     }} />
+
+                    {key.length > 0 &&
+
+                        <TouchableWithoutFeedback onPress={() => {
+                            setKey('')
+                        }}>
+                            <View style={{
+                                right: 5,
+                                top: 8,
+                                position: 'absolute'
+                            }}>
+                                <Icon type='ionicon' name='close-circle' />
+                            </View>
+                        </TouchableWithoutFeedback>
+                    }
                     {/* data barang */}
 
                 </View>
@@ -208,43 +234,53 @@ export default function Transaksi({ navigation, route }) {
             {
                 key.length > 0 && produk.length > 0 && <View style={{
                     backgroundColor: colors.white,
-                    marginHorizontal: 50,
+                    marginHorizontal: 10,
                     padding: 10,
                     zIndex: 99,
-                    marginTop: 5,
-                    position: 'absolute',
+                    // position: 'absolute',
                     // height: 200,
-                    width: windowWidth / 1.2,
-                    top: 60,
+
+                    top: 10,
                     borderRadius: 10,
                 }}>
-                    {produk.slice(0,).map(i => {
-                        return (
-                            <TouchableOpacity onPress={() => {
-                                setPilih(i);
-                                // setKey('');
-                                setModalVisible(true);
-                                // myInput.current.focus();
-                                setTimeout(() => {
-                                    myInput.current.focus();
-                                }, 800)
-                            }} style={{
-                                marginVertical: 5,
-                                flexDirection: 'row'
-                            }}>
-                                <View style={{
-                                    flex: 1,
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                        {produk.slice(0,).map(i => {
+                            return (
+                                <View key={i.id_produk} style={{
+                                    marginVertical: 10,
+                                    flexDirection: 'row',
+                                    borderBottomWidth: 1,
+                                    paddingVertical: 5,
+                                    borderBottomColor: colors.border,
+                                    alignItems: 'center'
                                 }}>
-                                    <Text >{i.nama_produk}</Text>
-                                    <Text style={{
-                                        fontFamily: fonts.secondary[400],
-                                        fontSize: 10,
-                                    }}>{i.motor_lainnya}</Text>
+                                    <View style={{
+                                        flex: 1,
+                                    }}>
+                                        <Text >{i.nama_produk}</Text>
+                                        <Text style={{
+                                            fontFamily: fonts.secondary[400],
+                                            fontSize: 10,
+                                        }}>{i.motor_lainnya}</Text>
+                                    </View>
+                                    <Text>Stok : {i.stok}</Text>
+                                    <TouchableOpacity style={{
+                                        paddingHorizontal: 10,
+                                    }} onPress={() => {
+                                        setPilih(i);
+                                        // setKey('');
+                                        setModalVisible(true);
+                                        // myInput.current.focus();
+                                        setTimeout(() => {
+                                            myInput.current.focus();
+                                        }, 800)
+                                    }}>
+                                        <Icon type='ionicon' name='open-outline' color={colors.primary} />
+                                    </TouchableOpacity>
                                 </View>
-                                <Text>Stok : {i.stok}</Text>
-                            </TouchableOpacity>
-                        )
-                    })}
+                            )
+                        })}
+                    </ScrollView>
                 </View>
 
             }
@@ -423,41 +459,83 @@ export default function Transaksi({ navigation, route }) {
                     flex: 1,
                 }}>
 
-                    {/* <CurrencyInput
-                        onChangeText={(formattedValue) => {
-                            console.log(formattedValue); // R$ +2.310,46
-                        }}
-                        placeholderTextColor={colors.placeholder}
-                        style={{
-                            backgroundColor: colors.white,
+
+
+
+
+
+
+                    {/* <TextInput
+
+
+                        onChangeText={async x => {
+
+
+                            let FRMT = formatNumber(x, {
+                                separator: ',',
+                                prefix: '',
+                                precision: 0,
+                                delimiter: ',',
+                            });
+                            console.log(FRMT)
+
+                            let deciFormatted = Number(FRMT).toFixed(0)
+                            let newValue = (isNaN(deciFormatted) ? FRMT : deciFormatted);
+
+                            setBAYAR(newValue);
+                            setTrx({
+                                ...trx,
+                                bayar: x,
+                                kembalian: x - trx.total
+                            })
+
+
+
+
+                        }} keyboardType='number-pad' style={{
                             borderRadius: 10,
                             paddingLeft: 10,
-                            color: colors.black,
-                            fontSize: 12,
-                            fontFamily: fonts.primary[400],
-                        }}
-
-                    /> */}
-
-
-
-
-                    <TextInput value={trx.bayar.toString()} onChangeText={x => {
-                        console.log(x)
-                        setTrx({
-                            ...trx,
-                            bayar: x,
-                            kembalian: x - trx.total
-                        })
-                    }} keyboardType='number-pad' style={{
-                        borderRadius: 10,
-                        paddingLeft: 10,
+                            backgroundColor: colors.white,
+                            fontFamily: fonts.secondary[600],
+                            fontSize: 20,
+                            height: 50,
+                            color: colors.primary,
+                        }} /> */}
+                    <View style={{
                         backgroundColor: colors.white,
-                        fontFamily: fonts.secondary[600],
-                        fontSize: 20,
                         height: 50,
-                        color: colors.primary,
-                    }} />
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderRadius: 10,
+                    }}>
+                        <FakeCurrencyInput
+                            style={{
+                                backgroundColor: colors.white,
+
+                                textAlign: 'center',
+                                fontSize: 22,
+                                color: colors.primary,
+                                fontFamily: fonts.secondary[600]
+                            }}
+                            value={BAYAR}
+                            onChangeValue={x => {
+                                setBAYAR(x);
+
+                            }}
+                            prefix=""
+                            delimiter=","
+                            separator="."
+                            precision={0}
+                            onChangeText={(formattedValue) => {
+                                let byr = formattedValue.replace(",", "").replace(",", "").replace(",", "");
+                                setTrx({
+                                    ...trx,
+                                    bayar: byr,
+                                    kembalian: byr - trx.total
+                                })
+                            }}
+                        />
+                    </View>
                 </View>
 
                 <TouchableOpacity style={{
