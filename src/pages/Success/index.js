@@ -129,7 +129,7 @@ export default function Success({ navigation, route }) {
                 borderRadius: 10,
             }}>
                 <View style={{
-                    flex: 0.5,
+                    flex: 0.4,
                     justifyContent: 'center',
                     alignItems: 'center'
                 }}>
@@ -142,9 +142,14 @@ export default function Success({ navigation, route }) {
                         fontFamily: fonts.secondary[600],
                         fontSize: 20,
                     }}>Transaksi Berhasil !</Text>
-                </View>
-                <FlatList data={cart} renderItem={__renderItem} />
 
+                </View>
+
+                <View style={{
+                    flex: 1,
+                }}>
+                    <FlatList data={cart} renderItem={__renderItem} />
+                </View>
                 <View style={{
                     flex: 0.5,
                     paddingHorizontal: 20,
