@@ -180,7 +180,7 @@ export default function Produk({ navigation }) {
                                 fontSize: 12,
                                 color: colors.foourty,
                                 flex: 0.4,
-                            }}>Motor Lainnya</Text>
+                            }}>Persamaan Motor Lainnya</Text>
 
                             <Text style={{
                                 flex: 1,

@@ -85,7 +85,7 @@ export default function ProdukDetail({ navigation, route }) {
                         <MYlistdata label="Harga Modal" value={new Intl.NumberFormat().format(data.harga_modal)} />
                         <MYlistdata label="Harga Jual" value={new Intl.NumberFormat().format(data.harga_jual)} />
                         <MYlistdata label="Merek" value={data.merek} />
-                        <MYlistdata label="Persamaan Motor Lainnya" value={data.motor_lainnya} />
+                        <MYlistdata label="Nama Persamaan Motor Lainnya" value={data.motor_lainnya} />
                         <MYlistdata label="Lokasi" value={data.lokasi} />
                     </View>
 
@@ -95,9 +95,9 @@ export default function ProdukDetail({ navigation, route }) {
                         padding: 10,
                         borderRadius: 10,
                     }}>
-                        <MYlistdata label="Harga Partai Silver" value={new Intl.NumberFormat().format(data.harga_silver)} />
-                        <MYlistdata label="Harga Partai Gold" value={new Intl.NumberFormat().format(data.harga_gold)} />
-                        <MYlistdata label="Harga Partai Platinum" value={new Intl.NumberFormat().format(data.harga_modal)} />
+                        <MYlistdata label="Harga Bengkel" value={new Intl.NumberFormat().format(data.harga_silver)} />
+                        <MYlistdata label="Harga Partai sedang" value={new Intl.NumberFormat().format(data.harga_gold)} />
+                        <MYlistdata label="Harga Partai besar" value={new Intl.NumberFormat().format(data.harga_modal)} />
 
                     </View>
 

@@ -21,6 +21,7 @@ import Minimal from './Minimal';
 import Success from './Success';
 import PrinterBluetooth from './PrinterBluetooth';
 import LaporanDetail from './LaporanDetail';
+import Laris from './Laris';
 
 // produk
 
@@ -54,6 +55,7 @@ export {
   PenggunaEdit,
   PenggunaDetail,
   AAAtur,
+  Laris,
 
   Produk,
   ProdukAdd,

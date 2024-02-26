@@ -14,7 +14,7 @@ import { FloatingAction } from "react-native-floating-action";
 import 'intl';
 import 'intl/locale-data/jsonp/en';
 
-export default function Minimal({ navigation }) {
+export default function Laris({ navigation }) {
     const [modalVisible, setModalVisible] = useState(false);
     const isFocused = useIsFocused();
 
@@ -36,7 +36,7 @@ export default function Minimal({ navigation }) {
 
 
     const getTransaction = () => {
-        axios.post(apiURL + 'produk_minimal').then(res => {
+        axios.post(apiURL + 'produk_laris').then(res => {
             console.log(res.data);
             setData(res.data);
             setTemp(res.data);
@@ -85,142 +85,21 @@ export default function Minimal({ navigation }) {
 
                     </View>
 
-                    <View style={{
-                        flexDirection: 'row'
-                    }}>
-                        <View style={{
-                            backgroundColor: colors.success,
-                            paddingHorizontal: 5,
-                            borderRadius: 5,
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}>
-                            <Text style={{
-                                fontFamily: fonts.secondary[600],
-                                color: colors.white,
-                                fontSize: 12
-                            }}>Stock Toko Saat ini : {item.stok}</Text>
-                        </View>
-                        <View style={{
-                            left: 10,
-                            backgroundColor: colors.warning,
-                            paddingHorizontal: 5,
-                            borderRadius: 5,
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}>
-                            <Text style={{
-                                fontFamily: fonts.secondary[600],
-                                color: colors.white,
-                                fontSize: 12
-                            }}>Minimal : {item.minimal}</Text>
-                        </View>
-                    </View>
 
-                    <View style={{
-                        flexDirection: 'row'
-                    }}>
-                        <View style={{
-                            flex: 1
-                        }}>
-                            <View style={{
-                                marginTop: 5,
-                                flexDirection: 'row'
-                            }}>
-                                <Text style={{
-                                    fontFamily: fonts.secondary[400],
-                                    fontSize: 12,
-                                    color: colors.foourty,
-                                    flex: 0.4,
-                                }}>Merek</Text>
-                                <Text style={{
-                                    fontFamily: fonts.secondary[400],
-                                    fontSize: 12,
-                                    color: colors.foourty,
-                                    flex: 0.2,
-                                }}>:</Text>
-                                <Text style={{
-                                    flex: 1,
-                                    fontFamily: fonts.secondary[600],
-                                    fontSize: 12,
-                                    color: colors.foourty
-                                }}>{item.merek}</Text>
-                            </View>
-                            <View style={{
-                                flexDirection: 'row'
-                            }}>
-                                <Text style={{
-                                    fontFamily: fonts.secondary[400],
-                                    fontSize: 12,
-                                    color: colors.foourty,
-                                    flex: 0.4,
-                                }}>Harga</Text>
-                                <Text style={{
-                                    fontFamily: fonts.secondary[400],
-                                    fontSize: 12,
-                                    color: colors.foourty,
-                                    flex: 0.2,
-                                }}>:</Text>
-                                <Text style={{
-                                    flex: 1,
-                                    fontFamily: fonts.secondary[600],
-                                    fontSize: 12,
-                                    color: colors.foourty
-                                }}>{new Intl.NumberFormat().format(item.harga_jual)}</Text>
-                            </View>
-                            <View style={{
-                                flexDirection: 'row'
-                            }}>
-                                <Text style={{
-                                    fontFamily: fonts.secondary[400],
-                                    fontSize: 12,
-                                    color: colors.foourty,
-                                    flex: 0.4,
-                                }}>Lokasi</Text>
-                                <Text style={{
-                                    fontFamily: fonts.secondary[400],
-                                    fontSize: 12,
-                                    color: colors.foourty,
-                                    flex: 0.2,
-                                }}>:</Text>
-                                <Text style={{
-                                    flex: 1,
-                                    fontFamily: fonts.secondary[600],
-                                    fontSize: 12,
-                                    color: colors.foourty
-                                }}>{item.lokasi}</Text>
-                            </View>
-                        </View>
 
-                        <View style={{
-                            flex: 1,
-                            padding: 5,
-                        }}>
 
-                            <Text style={{
-                                fontFamily: fonts.secondary[400],
-                                fontSize: 12,
-                                color: colors.foourty,
-                                flex: 0.4,
-                            }}>Motor Lainnya</Text>
-
-                            <Text style={{
-                                flex: 1,
-                                fontFamily: fonts.secondary[600],
-                                fontSize: 12,
-                                color: colors.primary
-                            }}>{item.motor_lainnya}</Text>
-
-                        </View>
-                    </View>
                 </View>
                 <View style={{
                     backgroundColor: colors.secondary,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    width: 30,
+                    width: 80,
+
                 }}>
-                    <Icon color={colors.white} type='ionicon' name='chevron-forward' />
+                    <Text style={{
+                        fontFamily: fonts.secondary[600],
+                        color: colors.white
+                    }}>{item.qty}</Text>
                 </View>
 
             </TouchableOpacity >

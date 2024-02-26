@@ -244,7 +244,7 @@ export default function Transaksi({ navigation, route }) {
                     borderRadius: 10,
                 }}>
                     <ScrollView showsVerticalScrollIndicator={false}>
-                        {produk.slice(0,).map(i => {
+                        {produk.slice(0, 20).map(i => {
                             return (
                                 <View key={i.id_produk} style={{
                                     marginVertical: 10,
@@ -280,7 +280,9 @@ export default function Transaksi({ navigation, route }) {
                                 </View>
                             )
                         })}
+                        <MyGap jarak={40} />
                     </ScrollView>
+
                 </View>
 
             }

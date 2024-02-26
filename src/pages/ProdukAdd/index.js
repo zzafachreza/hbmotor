@@ -127,7 +127,7 @@ export default function ProdukAdd({ navigation, route }) {
                     <MyInput uang label="Harga Jual" keyboardType='number-pad' iconname="pricetag" placeholder="Masukan harga jual" value={kirim.harga_jual} onChangeText={x => setKirim({ ...kirim, harga_jual: x })} />
 
                     <MyGap jarak={10} />
-                    <MyInput label="Nama Persamaan Motor Lainnya" iconname="pricetag" placeholder="Masukan harga jual" value={kirim.motor_lainnya} onChangeText={x => setKirim({ ...kirim, motor_lainnya: x })} />
+                    <MyInput label="Nama Persamaan Motor Lainnya" iconname="pricetag" placeholder="Masukan nama persamaan motor lainnya" value={kirim.motor_lainnya} onChangeText={x => setKirim({ ...kirim, motor_lainnya: x })} />
 
                     <MyGap jarak={10} />
                     <MyInput label="Lokasi" iconname="location" placeholder="Masukan lokasi" value={kirim.lokasi} onChangeText={x => setKirim({ ...kirim, lokasi: x })} />
@@ -145,13 +145,13 @@ export default function ProdukAdd({ navigation, route }) {
                         fontSize: 20,
                         marginBottom: 10,
                     }}>Harga Partai</Text>
-                    <MyInput uang label="Harga Partai Silver" keyboardType='number-pad' iconname="pricetag" placeholder="Masukan partai silver" value={kirim.harga_silver} onChangeText={x => setKirim({ ...kirim, harga_silver: x })} />
+                    <MyInput uang label="Bengkel" keyboardType='number-pad' iconname="pricetag" placeholder="Masukan partai silver" value={kirim.harga_silver} onChangeText={x => setKirim({ ...kirim, harga_silver: x })} />
                     <MyGap jarak={10} />
 
-                    <MyInput uang label="Harga Partai Gold" keyboardType='number-pad' iconname="pricetag" placeholder="Masukan partai gold" value={kirim.harga_gold} onChangeText={x => setKirim({ ...kirim, harga_gold: x })} />
+                    <MyInput uang label="Partai Sedang" keyboardType='number-pad' iconname="pricetag" placeholder="Masukan partai gold" value={kirim.harga_gold} onChangeText={x => setKirim({ ...kirim, harga_gold: x })} />
                     <MyGap jarak={10} />
 
-                    <MyInput uang label="Harga Partai Platinum" keyboardType='number-pad' iconname="pricetag" placeholder="Masukan partai platinum" value={kirim.harga_platinum} onChangeText={x => setKirim({ ...kirim, harga_platinum: x })} />
+                    <MyInput uang label="Partai Besar" keyboardType='number-pad' iconname="pricetag" placeholder="Masukan partai platinum" value={kirim.harga_platinum} onChangeText={x => setKirim({ ...kirim, harga_platinum: x })} />
                     <MyGap jarak={10} />
 
                 </View>

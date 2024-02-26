@@ -25,6 +25,7 @@ import {
   Success,
   PrinterBluetooth,
   LaporanDetail,
+  Laris,
 } from '../pages';
 import { colors } from '../utils';
 import { Icon } from 'react-native-elements';
@@ -47,6 +48,19 @@ export default function Router() {
         component={AAAtur}
         options={{
           headerShown: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="Laris"
+        component={Laris}
+        options={{
+          headerShown: true,
+          headerTitle: 'Produk Terlaris',
+          headerStyle: {
+            backgroundColor: colors.white,
+          },
+          headerTintColor: colors.black,
         }}
       />
 
