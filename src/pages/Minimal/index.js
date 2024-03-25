@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Text, View, Image, FlatList, Modal, ActivityIndicator, Dimensions, Animated } from 'react-native'
+import { Alert, StyleSheet, Text, View, Image, FlatList, Modal, ActivityIndicator, Dimensions, Animated, Linking } from 'react-native'
 import React, { useState, useEffect, useRef } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { apiURL, getData, MYAPP, storeData } from '../../utils/localStorage';
@@ -55,7 +55,16 @@ export default function Minimal({ navigation }) {
     const __renderItem = ({ item }) => {
 
         return (
-            <TouchableOpacity onPress={() => navigation.navigate('ProdukDetail', item)} style={{
+            <TouchableOpacity onPress={() => {
+                if (item.nama_supplier !== 'Tidak ada') {
+                    Linking.openURL('https://wa.me/' + item.telepon)
+                } else {
+                    showMessage({
+                        type: 'danger',
+                        message: 'Maaf supplier / sales belum di atur'
+                    })
+                }
+            }} style={{
                 borderBottomWidth: 1,
                 borderBottomColor: colors.zavalabs,
                 backgroundColor: colors.white,
@@ -215,12 +224,13 @@ export default function Minimal({ navigation }) {
                     </View>
                 </View>
                 <View style={{
-                    backgroundColor: colors.secondary,
+                    backgroundColor: item.nama_supplier !== 'Tidak ada' ? colors.success : colors.secondary,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    width: 30,
+                    width: 40,
                 }}>
-                    <Icon color={colors.white} type='ionicon' name='chevron-forward' />
+                    {item.nama_supplier == 'Tidak ada' && <Icon color={colors.white} type='ionicon' name='close' />}
+                    {item.nama_supplier !== 'Tidak ada' && <Icon color={colors.white} type='ionicon' name='logo-whatsapp' />}
                 </View>
 
             </TouchableOpacity >

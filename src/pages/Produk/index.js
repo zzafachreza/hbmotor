@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { apiURL, getData, MYAPP, storeData } from '../../utils/localStorage';
 import { colors, fonts, windowHeight, windowWidth } from '../../utils';
-import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView, TextInput, TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { showMessage } from 'react-native-flash-message';
 import Sound from 'react-native-sound';
 import { Icon } from 'react-native-elements/dist/icons/Icon';
@@ -22,9 +22,18 @@ export default function Produk({ navigation }) {
 
     const [data, setData] = useState([]);
     const [tmp, setTemp] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [filter, setFilter] = useState({
         key: 'nama_produk',
     })
+    const [key, setKey] = useState('');
+    const [limit, setLimit] = useState({
+        start: 0,
+        end: 20,
+        tipe: 'all'
+    })
+
+
     useEffect(() => {
 
         if (isFocused) {
@@ -35,11 +44,69 @@ export default function Produk({ navigation }) {
     }, [isFocused]);
 
 
-    const getTransaction = () => {
-        axios.post(apiURL + 'produk').then(res => {
+    const handleInfinityScroll = (event) => {
+        let mHeight = event.nativeEvent.layoutMeasurement.height;
+        let cSize = event.nativeEvent.contentSize.height;
+        let Y = event.nativeEvent.contentOffset.y;
+        if (Math.ceil(mHeight + Y) >= cSize) return true;
+        return false;
+    }
+
+    const getTransaction = (s = limit.start, e = limit.end) => {
+        setLoading(true);
+        axios.post(apiURL + 'produk', {
+            start: s,
+            end: e
+        }).then(res => {
+            setLoading(false)
             console.log(res.data);
-            setData(res.data);
-            setTemp(res.data);
+            setLimit({
+                start: res.data.start,
+                end: res.data.end,
+                tipe: res.data.tipe
+            })
+
+            if (res.data.start > 0) {
+
+                let TMPALL = [...data];
+                TMPALL.push(...res.data.data);
+                setData(TMPALL)
+            } else {
+                setData(res.data.data);
+            }
+
+
+
+
+            setTemp(res.data.data);
+
+        })
+    }
+
+    const filterCari = (x = key, s = limit.start, e = limit.end) => {
+        setLoading(true);
+        axios.post(apiURL + 'produk_filter', {
+            key: x,
+            start: s,
+            end: e
+        }).then(res => {
+            console.log(res.data);
+            setLimit({
+                start: res.data.start,
+                end: res.data.end,
+                tipe: res.data.tipe
+            })
+
+            if (res.data.start > 0) {
+
+                let TMPALL = [...data];
+                TMPALL.push(...res.data.data);
+                setData(TMPALL)
+            } else {
+                setData(res.data.data);
+            }
+
+            setLoading(false)
         })
     }
 
@@ -221,8 +288,10 @@ export default function Produk({ navigation }) {
             }}>
                 <View style={{
                     flexDirection: 'row',
-
+                    backgroundColor: colors.white,
                     borderRadius: 10,
+                    overflow: 'hidden',
+                    alignItems: 'center',
                     marginBottom: 10,
                 }}>
                     <View style={{
@@ -231,58 +300,218 @@ export default function Produk({ navigation }) {
                         justifyContent: 'center',
                         alignItems: 'center',
                         padding: 10,
-                        backgroundColor: colors.white,
+
                     }}>
                         <Icon type='ionicon' color={colors.border} size={20} name='search' />
                     </View>
                     <View style={{
                         flex: 1,
-                        backgroundColor: colors.white,
+                        position: 'relative',
                         borderBottomRightRadius: 10,
                         borderTopRightRadius: 10,
                     }}>
-                        <TextInput placeholder='Cari Produk . . .' style={{
+
+
+                        <TextInput value={key} onChangeText={x => setKey(x)} onSubmitEditing={x => {
+                            filterCari(x.nativeEvent.text, 0, 20)
+                        }} placeholder='Cari Produk . . .' style={{
                             fontFamily: fonts.secondary[400],
                             fontSize: 18,
-                        }} onChangeText={x => {
-
-                            if (x.length == 0) {
-                                setData(tmp)
-                            } else {
-                                if (filter.key == 'nama_produk') {
-                                    const filtered = data.filter(i => i.nama_produk.toLowerCase().indexOf(x.toLowerCase()) > -1);
-                                    setData(filtered);
-                                } else if (filter.key == 'merek') {
-                                    console.log('merek')
-                                    const filtered = data.filter(i => i.merek.toLowerCase().indexOf(x.toLowerCase()) > -1);
-                                    setData(filtered);
-                                } else if (filter.key == 'motor_lainnya') {
-                                    const filtered = data.filter(i => i.motor_lainnya.toLowerCase().indexOf(x.toLowerCase()) > -1);
-                                    setData(filtered);
-                                }
-
-                            }
+                        }}
 
 
+                        />
 
-                        }} />
+
                     </View>
-                    <TouchableOpacity onPress={() => {
-                        setModalVisible(true)
-                    }} style={{
-                        borderBottomLeftRadius: 10,
-                        borderTopLeftRadius: 10,
+                    <View style={{
+
                         justifyContent: 'center',
                         alignItems: 'center',
                         padding: 10,
+                        width: 50,
+
                     }}>
-                        <Image source={require('../../assets/filter.png')} style={{
-                            width: 30,
-                            height: 30,
-                        }} />
-                    </TouchableOpacity>
+                        {key.length > 0 &&
+                            <TouchableOpacity onPress={() => setKey('')}>
+                                <Icon type='ionicon' color={colors.border} size={20} name='close' />
+                            </TouchableOpacity>
+                        }
+                    </View>
+
                 </View>
-                <FlatList data={data} renderItem={__renderItem} />
+
+                {data.length > 0 &&
+
+                    <ScrollView onScroll={event => {
+
+                        if (handleInfinityScroll(event)) {
+                            // console.log(event);
+                            console.log(limit);
+                            if (limit.tipe == 'all') {
+                                getTransaction(limit.start + 20, limit.end + 20)
+                            } else {
+                                filterCari(key, limit.start + 20, limit.end + 20)
+                            }
+                        }
+                    }}>
+                        {data.map((item, index) => {
+                            return (
+                                <TouchableOpacity onPress={() => navigation.navigate('ProdukDetail', item)} style={{
+                                    borderBottomWidth: 1,
+                                    borderBottomColor: colors.zavalabs,
+                                    backgroundColor: colors.white,
+                                    borderRadius: 10,
+                                    marginVertical: 5,
+                                    flexDirection: 'row',
+                                    overflow: 'hidden'
+                                }}>
+
+                                    <View style={{
+                                        flex: 1,
+                                        justifyContent: 'center',
+                                        padding: 10,
+                                    }}>
+                                        <View style={{
+                                            flexDirection: 'row',
+
+                                        }}>
+                                            <Text style={{
+                                                flex: 1,
+                                                fontFamily: fonts.secondary[600],
+                                                fontSize: 14,
+                                                color: colors.black
+                                            }}>{item.nama_produk}</Text>
+
+                                            <View style={{
+                                                backgroundColor: colors.success,
+                                                paddingHorizontal: 5,
+                                                borderRadius: 5,
+                                            }}>
+                                                <Text style={{
+                                                    fontFamily: fonts.secondary[600],
+                                                    color: colors.white,
+                                                    fontSize: 12
+                                                }}>Stock : {item.stok}</Text>
+                                            </View>
+
+                                        </View>
+
+                                        <View style={{
+                                            flexDirection: 'row'
+                                        }}>
+                                            <View style={{
+                                                flex: 1
+                                            }}>
+                                                <View style={{
+                                                    marginTop: 5,
+                                                    flexDirection: 'row'
+                                                }}>
+                                                    <Text style={{
+                                                        fontFamily: fonts.secondary[400],
+                                                        fontSize: 12,
+                                                        color: colors.foourty,
+                                                        flex: 0.4,
+                                                    }}>Merek</Text>
+                                                    <Text style={{
+                                                        fontFamily: fonts.secondary[400],
+                                                        fontSize: 12,
+                                                        color: colors.foourty,
+                                                        flex: 0.2,
+                                                    }}>:</Text>
+                                                    <Text style={{
+                                                        flex: 1,
+                                                        fontFamily: fonts.secondary[600],
+                                                        fontSize: 12,
+                                                        color: colors.foourty
+                                                    }}>{item.merek}</Text>
+                                                </View>
+                                                <View style={{
+                                                    flexDirection: 'row'
+                                                }}>
+                                                    <Text style={{
+                                                        fontFamily: fonts.secondary[400],
+                                                        fontSize: 12,
+                                                        color: colors.foourty,
+                                                        flex: 0.4,
+                                                    }}>Harga</Text>
+                                                    <Text style={{
+                                                        fontFamily: fonts.secondary[400],
+                                                        fontSize: 12,
+                                                        color: colors.foourty,
+                                                        flex: 0.2,
+                                                    }}>:</Text>
+                                                    <Text style={{
+                                                        flex: 1,
+                                                        fontFamily: fonts.secondary[600],
+                                                        fontSize: 12,
+                                                        color: colors.foourty
+                                                    }}>{new Intl.NumberFormat().format(item.harga_jual)}</Text>
+                                                </View>
+                                                <View style={{
+                                                    flexDirection: 'row'
+                                                }}>
+                                                    <Text style={{
+                                                        fontFamily: fonts.secondary[400],
+                                                        fontSize: 12,
+                                                        color: colors.foourty,
+                                                        flex: 0.4,
+                                                    }}>Lokasi</Text>
+                                                    <Text style={{
+                                                        fontFamily: fonts.secondary[400],
+                                                        fontSize: 12,
+                                                        color: colors.foourty,
+                                                        flex: 0.2,
+                                                    }}>:</Text>
+                                                    <Text style={{
+                                                        flex: 1,
+                                                        fontFamily: fonts.secondary[600],
+                                                        fontSize: 12,
+                                                        color: colors.foourty
+                                                    }}>{item.lokasi}</Text>
+                                                </View>
+                                            </View>
+
+                                            <View style={{
+                                                flex: 1,
+                                                padding: 5,
+                                            }}>
+
+                                                <Text style={{
+                                                    fontFamily: fonts.secondary[400],
+                                                    fontSize: 12,
+                                                    color: colors.foourty,
+                                                    flex: 0.4,
+                                                }}>Persamaan Motor Lainnya</Text>
+
+                                                <Text style={{
+                                                    flex: 1,
+                                                    fontFamily: fonts.secondary[600],
+                                                    fontSize: 12,
+                                                    color: colors.primary
+                                                }}>{item.motor_lainnya}</Text>
+
+                                            </View>
+                                        </View>
+                                    </View>
+                                    <View style={{
+                                        backgroundColor: colors.secondary,
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        width: 30,
+                                    }}>
+                                        <Icon color={colors.white} type='ionicon' name='chevron-forward' />
+                                    </View>
+
+                                </TouchableOpacity >
+                            )
+                        })}
+                    </ScrollView>
+
+                }
+
+
+                {loading && <ActivityIndicator size="small" color={colors.primary} />}
             </View>
 
 

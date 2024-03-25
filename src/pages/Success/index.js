@@ -30,6 +30,8 @@ import {
     BLEPrinter,
 } from "react-native-thermal-receipt-printer";
 import { FlatList } from 'react-native';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import Share from 'react-native-share';
 
 
 export default function Success({ navigation, route }) {
@@ -52,6 +54,99 @@ export default function Success({ navigation, route }) {
         },
         total: 0
     });
+
+
+    const createPDF = async () => {
+
+        let header = `
+        <center><img src="https://hbmotor.okeadmin.com/upload/230516115447logo.png" width="100" height="100" /></center>
+        <table width="100%" border="0" style="margin-top:2%;border-collapse:collapse" cellpadding="4">
+        <tr>
+            <td>
+                Tanggal
+            </td>
+            <td>${moment().format('dddd, DD MMMM YYYY')}</td>
+        </tr>
+
+        <tr>
+        <td>
+            Pembayaran
+        </td>
+        <td>${trx.pembayaran}</td>
+    </tr>
+
+        </table>
+        <hr />
+        <table width="100%" border="0" style="margin-top:5%;border-collapse:collapse" cellpadding="4">
+      `;
+
+        let body = '';
+        cart.map(item => {
+            body += `<tr>`;
+            body += `<td>${item.nama_produk} <br/> ${item.qty} x ${new Intl.NumberFormat().format(item.harga)}</td>`;
+            body += `<td>Rp ${new Intl.NumberFormat().format(item.harga * item.qty)}`;
+            body += `</tr>`;
+        });
+
+        let footer = `</table>
+
+        <hr />
+        <table width="100%" border="0" style="margin-top:2%;border-collapse:collapse" cellpadding="4">
+        <tr>
+            <td>
+                Total Tagihan
+            </td>
+            <td><h4>Rp ${new Intl.NumberFormat().format(trx.total)}</h4></td>
+        </tr>
+
+        <tr>
+            <td>
+                Diterima
+            </td>
+            <td><h4>Rp ${new Intl.NumberFormat().format(trx.bayar)}</h4></td>
+        </tr>
+
+        <tr>
+            <td>
+                Kembalian
+            </td>
+            <td><h4>Rp ${new Intl.NumberFormat().format(trx.kembalian)}</h4></td>
+        </tr>
+
+        </table>
+        
+        `;
+
+        let options = {
+            html: header + body + footer,
+            fileName: 'HBMotor',
+            directory: 'Documents',
+            width: 200,
+        };
+
+        console.log(options.html)
+
+
+
+        let file = await RNHTMLtoPDF.convert(options)
+        // console.log(file.filePath);
+        // alert(file.filePath);
+
+        await Share.open({
+            title: MYAPP,
+            message: "Struk Penjualan",
+            url: 'file:///' + file.filePath,
+            subject: "Report",
+        })
+            .then((res) => {
+                console.log(res);
+
+            })
+            .catch((err) => {
+                err && console.log(err);
+            });
+
+    }
 
     useEffect(() => {
         getData('paired').then(res => {
@@ -168,7 +263,7 @@ export default function Success({ navigation, route }) {
                         <Text style={{
                             fontFamily: fonts.secondary[600],
                             fontSize: 20,
-                        }}>Tunai</Text>
+                        }}>{trx.pembayaran}</Text>
                     </View>
                     <View style={{
                         flexDirection: 'row',
@@ -356,6 +451,8 @@ export default function Success({ navigation, route }) {
 
 
                     title="Cetak Struk" colorText={colors.primary} iconColor={colors.primary} Icons='print' />
+                <MyGap jarak={10} />
+                <MyButton warna={colors.danger} title="Share Struk" Icons='download' onPress={createPDF} />
                 <MyGap jarak={10} />
                 <MyButton title="Mulai Transaksi Baru" Icons='cart' onPress={() => navigation.replace('Transaksi')} />
             </View>

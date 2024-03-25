@@ -97,7 +97,7 @@ export default function ProdukDetail({ navigation, route }) {
                     }}>
                         <MYlistdata label="Harga Bengkel" value={new Intl.NumberFormat().format(data.harga_silver)} />
                         <MYlistdata label="Harga Partai sedang" value={new Intl.NumberFormat().format(data.harga_gold)} />
-                        <MYlistdata label="Harga Partai besar" value={new Intl.NumberFormat().format(data.harga_modal)} />
+                        <MYlistdata label="Harga Partai besar" value={new Intl.NumberFormat().format(data.harga_platinum)} />
 
                     </View>
 
@@ -113,7 +113,6 @@ export default function ProdukDetail({ navigation, route }) {
 
                     <View style={{
                         marginTop: 20,
-                        marginBottom: 20,
                         backgroundColor: colors.white,
                         padding: 10,
                         borderRadius: 10,
@@ -121,6 +120,19 @@ export default function ProdukDetail({ navigation, route }) {
                         <MYlistdata label="Stok Toko Sekarang" value={data.stok} />
                         <MYlistdata label="Satuan" value={data.uom} />
                         <MYlistdata label="Minimum Stok" value={data.minimal} />
+
+                    </View>
+
+
+                    <View style={{
+                        marginTop: 20,
+                        backgroundColor: colors.white,
+                        padding: 10,
+                        borderRadius: 10,
+                        marginBottom: 10,
+                    }}>
+                        <MYlistdata label="Nama Supplier / Sales" value={data.nama_supplier} />
+                        <MYlistdata label="Telepon" value={data.telepon} />
 
                     </View>
 

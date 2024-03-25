@@ -26,6 +26,7 @@ import {
   PrinterBluetooth,
   LaporanDetail,
   Laris,
+  Laba,
 } from '../pages';
 import { colors } from '../utils';
 import { Icon } from 'react-native-elements';
@@ -57,6 +58,19 @@ export default function Router() {
         options={{
           headerShown: true,
           headerTitle: 'Produk Terlaris',
+          headerStyle: {
+            backgroundColor: colors.white,
+          },
+          headerTintColor: colors.black,
+        }}
+      />
+
+      <Stack.Screen
+        name="Laba"
+        component={Laba}
+        options={{
+          headerShown: true,
+          headerTitle: 'Laba dan Omzet',
           headerStyle: {
             backgroundColor: colors.white,
           },

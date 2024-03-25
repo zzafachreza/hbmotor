@@ -30,6 +30,7 @@ import NumberFormat from 'react-number-format';
 export default function Transaksi({ navigation, route }) {
 
     const [BAYAR, setBAYAR] = useState(0);
+    const [pembayaran, setPembayaran] = useState({})
 
     const currencyFormat = (num) => {
         return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
@@ -37,6 +38,7 @@ export default function Transaksi({ navigation, route }) {
 
     const [pilih, setPilih] = useState({});
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible2, setModalVisible2] = useState(false);
     const [key, setKey] = useState('');
     const [kirim, setKirim] = useState({});
     const [produk, setProduk] = useState([]);
@@ -81,10 +83,19 @@ export default function Transaksi({ navigation, route }) {
     const [cart, setCart] = useState([])
 
     useEffect(() => {
-
+        __getBayar();
         __getProduk();
         __getCart();
     }, []);
+
+
+    const __getBayar = () => {
+        axios.post(apiURL + "bayar").then(res => {
+
+            console.log('bayar', res.data[0]);
+            setPembayaran(res.data[0])
+        })
+    }
 
 
     const __getCart = () => {
@@ -99,7 +110,7 @@ export default function Transaksi({ navigation, route }) {
                     fid_user: u.id,
                     total: res.data.total
                 })
-                console.log('cart', res.data);
+
             })
         })
 
@@ -131,13 +142,15 @@ export default function Transaksi({ navigation, route }) {
 
     }
 
-    const __getProduk = () => {
+    const __getProduk = (x = key) => {
 
 
-        axios.post(apiURL + "produk").then(res => {
+        axios.post(apiURL + "produk_list", {
+            key: x
+        }).then(res => {
             setProduk(res.data);
             setTemp(res.data);
-            console.log(res.data);
+
         })
     }
 
@@ -173,16 +186,22 @@ export default function Transaksi({ navigation, route }) {
                         height: 40,
                         paddingLeft: 10,
                         borderRadius: 10,
-                    }} value={key} onChangeText={x => {
-                        setKey(x);
-                        if (x.length == 0) {
-                            setProduk(tmp)
-                        } else {
-                            const filtered = produk.filter(i => i.nama_produk.toLowerCase().indexOf(x.toLowerCase()) > -1);
-                            setProduk(filtered);
-                        }
+                    }} value={key}
 
-                    }} />
+                        onSubmitEditing={x => {
+                            __getProduk(x.nativeEvent.text)
+                        }}
+
+                        onChangeText={x => {
+                            setKey(x);
+                            // if (x.length == 0) {
+                            //     setProduk(tmp)
+                            // } else {
+                            //     const filtered = produk.filter(i => i.nama_produk.toLowerCase().indexOf(x.toLowerCase()) > -1);
+                            //     setProduk(filtered);
+                            // }
+
+                        }} />
 
                     {key.length > 0 &&
 
@@ -244,7 +263,7 @@ export default function Transaksi({ navigation, route }) {
                     borderRadius: 10,
                 }}>
                     <ScrollView showsVerticalScrollIndicator={false}>
-                        {produk.slice(0, 20).map(i => {
+                        {produk.map(i => {
                             return (
                                 <View key={i.id_produk} style={{
                                     marginVertical: 10,
@@ -343,7 +362,9 @@ export default function Transaksi({ navigation, route }) {
                                             onPress: () => {
                                                 console.log(c.id)
                                                 axios.post(apiURL + 'cart_hapus', {
-                                                    id: c.id
+                                                    id: c.id,
+                                                    qty: c.qty,
+                                                    fid_produk: c.fid_produk
                                                 }).then(r => {
                                                     console.log(r.data)
                                                     showMessage({
@@ -439,6 +460,7 @@ export default function Transaksi({ navigation, route }) {
 
                                     })
                                 } else {
+                                    setModalVisible2(true)
                                     console.log(x)
                                     setTrx({
                                         ...trx,
@@ -561,6 +583,93 @@ export default function Transaksi({ navigation, route }) {
                 {!loading && <MyButton onPress={simpanTransaksi} title="SIMPAN TRANSAKSI" Icons="save" />}
                 {loading && <ActivityIndicator size="large" color={colors.primary} />}
             </View>
+
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible2}
+                onRequestClose={() => {
+                    setModalVisible2(!modalVisible2);
+                }}>
+                <View style={{
+                    flex: 1,
+                    padding: 10,
+                    justifyContent: 'center',
+                    backgroundColor: '#000000BF'
+                }}>
+                    <View style={{
+                        height: windowHeight / 2,
+                        backgroundColor: colors.white,
+                        padding: 10
+                    }}>
+                        <Text style={{
+                            fontFamily: fonts.secondary[600],
+                            fontSize: 20
+                        }}>PEMBAYARAN {trx.pembayaran}</Text>
+
+
+                        {trx.pembayaran == 'QRIS' &&
+
+                            <View>
+                                <Image source={{
+                                    uri: pembayaran.qris
+                                }} style={{
+                                    width: '100%',
+                                    height: 300,
+                                    resizeMode: 'contain'
+                                }} />
+
+                            </View>
+
+                        }
+
+                        {trx.pembayaran !== 'QRIS' &&
+
+                            <>
+                                <View style={{
+                                    marginTop: 20,
+                                }}>
+                                    <Text style={{
+                                        fontFamily: fonts.secondary[600],
+                                        fontSize: 20
+                                    }}>Nama Bank</Text>
+                                    <Text style={{
+                                        fontFamily: fonts.secondary[800],
+                                        fontSize: 20
+                                    }}>{pembayaran.nama_bank}</Text>
+                                </View>
+                                <View style={{
+                                    marginTop: 0,
+                                }}>
+                                    <Text style={{
+                                        fontFamily: fonts.secondary[600],
+                                        fontSize: 20
+                                    }}>Nomor Rekening</Text>
+                                    <Text style={{
+                                        fontFamily: fonts.secondary[800],
+                                        fontSize: 20
+                                    }}>{pembayaran.rekening}</Text>
+                                </View>
+                                <View style={{
+                                    marginTop: 0,
+                                }}>
+                                    <Text style={{
+                                        fontFamily: fonts.secondary[600],
+                                        fontSize: 20
+                                    }}>Atas Nama</Text>
+                                    <Text style={{
+                                        fontFamily: fonts.secondary[800],
+                                        fontSize: 20
+                                    }}>{pembayaran.atas_nama}</Text>
+                                </View>
+
+                            </>
+
+
+                        }
+                    </View>
+                </View>
+            </Modal>
 
             <Modal
                 animationType="fade"

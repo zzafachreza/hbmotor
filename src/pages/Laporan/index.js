@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { apiURL, getData, MYAPP, storeData } from '../../utils/localStorage';
 import { colors, fonts, windowHeight, windowWidth } from '../../utils';
-import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView, TextInput, TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { showMessage } from 'react-native-flash-message';
 import Sound from 'react-native-sound';
 import { Icon } from 'react-native-elements/dist/icons/Icon';
@@ -18,7 +18,7 @@ import moment from 'moment';
 export default function Laporan({ navigation }) {
     const [modalVisible, setModalVisible] = useState(false);
     const isFocused = useIsFocused();
-
+    const [tipe, setTipe] = useState('periode')
 
 
     const [data, setData] = useState([]);
@@ -30,7 +30,7 @@ export default function Laporan({ navigation }) {
     useEffect(() => {
 
         if (isFocused) {
-            getTransaction();
+            // getTransaction();
         }
 
 
@@ -50,12 +50,13 @@ export default function Laporan({ navigation }) {
         })
     }
 
-    const filterData = () => {
+    const filterData = (tipe = tipe) => {
 
         getData('user').then(u => {
             axios.post(apiURL + 'transaksi', {
                 fid_user: u.id,
                 level: u.level,
+                tipe: tipe,
                 awal: filter.awal,
                 akhir: filter.akhir
             }).then(res => {
@@ -186,6 +187,28 @@ export default function Laporan({ navigation }) {
                                     color: colors.foourty
                                 }}>{new Intl.NumberFormat().format(item.kembalian)}</Text>
                             </View>
+                            <View style={{
+                                flexDirection: 'row'
+                            }}>
+                                <Text style={{
+                                    fontFamily: fonts.secondary[400],
+                                    fontSize: 12,
+                                    color: colors.foourty,
+                                    flex: 0.4,
+                                }}>Pengguna</Text>
+                                <Text style={{
+                                    fontFamily: fonts.secondary[400],
+                                    fontSize: 12,
+                                    color: colors.foourty,
+                                    flex: 0.2,
+                                }}>:</Text>
+                                <Text style={{
+                                    flex: 1,
+                                    fontFamily: fonts.secondary[600],
+                                    fontSize: 12,
+                                    color: colors.foourty
+                                }}>{item.nama_lengkap}</Text>
+                            </View>
                         </View>
 
 
@@ -213,11 +236,72 @@ export default function Laporan({ navigation }) {
             position: 'relative'
         }}>
 
+            <View style={{
+                flexDirection: 'row',
+                backgroundColor: colors.white,
+                padding: 10,
+                borderRadius: 10,
+                marginBottom: 10,
+
+            }}>
+                <TouchableWithoutFeedback onPress={() => {
+                    setTipe('hari ini');
+                    filterData('hari ini');
+                }}>
+                    <View style={{
+                        backgroundColor: colors.primary,
+                        padding: 10,
+                        borderRadius: 10,
+                        marginHorizontal: 10,
+                    }}>
+                        <Text style={{
+                            fontFamily: fonts.secondary[60],
+                            color: colors.white,
+                        }}>Hari ini</Text>
+                    </View>
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => {
+                    setTipe('minggu ini');
+                    filterData('minggu ini');
+                }}>
+                    <View style={{
+
+                        backgroundColor: colors.primary,
+                        padding: 10,
+                        borderRadius: 10,
+                        marginHorizontal: 10,
+                    }}>
+                        <Text style={{
+                            fontFamily: fonts.secondary[60],
+                            color: colors.white,
+                        }}>Minggu ini</Text>
+                    </View>
+                </TouchableWithoutFeedback>
+
+                <TouchableWithoutFeedback onPress={() => {
+                    setTipe('bulan ini');
+                    filterData('bulan ini');
+                }}>
+                    <View style={{
+                        backgroundColor: colors.primary,
+                        padding: 10,
+                        borderRadius: 10,
+                        marginHorizontal: 10,
+                    }}>
+                        <Text style={{
+                            fontFamily: fonts.secondary[60],
+                            color: colors.white,
+                        }}>Bulan ini</Text>
+                    </View>
+                </TouchableWithoutFeedback>
+            </View>
+
 
             <View style={{
                 flexDirection: 'row',
                 backgroundColor: colors.white,
-                padding: 5,
+                padding: 10,
+                borderRadius: 10,
 
             }}>
                 <View style={{
@@ -246,13 +330,19 @@ export default function Laporan({ navigation }) {
                     flex: 0.5,
                     justifyContent: 'flex-end', paddingLeft: 5,
                 }}>
-                    <MyButton onPress={filterData} title="Filter" warna={colors.primary} />
+                    <MyButton onPress={() => {
+                        setTipe('periode');
+                        filterData('periode')
+                    }} title="Filter" warna={colors.primary} />
                 </View>
             </View>
             <View style={{
                 flex: 1,
             }}>
-
+                <Text style={{
+                    fontFamily: fonts.secondary[600],
+                    marginVertical: 10
+                }}>Filter Berdasarkan {tipe}</Text>
                 <FlatList data={data} renderItem={__renderItem} />
             </View>
 
