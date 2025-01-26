@@ -27,6 +27,9 @@ import {
   LaporanDetail,
   Laris,
   Laba,
+  Sales,
+  SalesAdd,
+  SalesEdit,
 } from '../pages';
 import { colors } from '../utils';
 import { Icon } from 'react-native-elements';
@@ -51,6 +54,48 @@ export default function Router() {
           headerShown: false,
         }}
       />
+
+      <Stack.Screen
+        name="Sales"
+        component={Sales}
+        options={{
+          headerShown: true,
+          headerTitle: 'Supplier / Sales',
+          headerStyle: {
+            backgroundColor: colors.white,
+          },
+          headerTintColor: colors.black,
+        }}
+      />
+
+      <Stack.Screen
+        name="SalesAdd"
+        component={SalesAdd}
+        options={{
+          headerShown: true,
+          headerTitle: 'Tambah Supplier / Sales',
+          headerStyle: {
+            backgroundColor: colors.white,
+          },
+          headerTintColor: colors.black,
+        }}
+      />
+
+      <Stack.Screen
+        name="SalesEdit"
+        component={SalesEdit}
+        options={{
+          headerShown: true,
+          headerTitle: 'Edit Supplier / Sales',
+          headerStyle: {
+            backgroundColor: colors.white,
+          },
+          headerTintColor: colors.black,
+        }}
+      />
+
+
+
 
       <Stack.Screen
         name="Laris"

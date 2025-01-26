@@ -12,6 +12,7 @@ import {
     Modal,
     Picker,
     TextInput,
+    FlatList,
 } from 'react-native';
 import { windowWidth, fonts, windowHeight } from '../../utils/fonts';
 import { apiURL, getData, MYAPP, storeData, urlAPI, urlApp, urlAvatar } from '../../utils/localStorage';
@@ -140,16 +141,20 @@ export default function Transaksi({ navigation, route }) {
             }
         ])
 
+
     }
+
+
+
+    const filteredData = produk.filter(item => {
+        const values = Object.values(item);
+        return values.some(value => value.toLowerCase().includes(key.toLowerCase()));
+    });
 
     const __getProduk = (x = key) => {
 
-
-        axios.post(apiURL + "produk_list", {
-            key: x
-        }).then(res => {
+        axios.post(apiURL + "produk_list").then(res => {
             setProduk(res.data);
-            setTemp(res.data);
 
         })
     }
@@ -188,18 +193,11 @@ export default function Transaksi({ navigation, route }) {
                         borderRadius: 10,
                     }} value={key}
 
-                        onSubmitEditing={x => {
-                            __getProduk(x.nativeEvent.text)
-                        }}
+
 
                         onChangeText={x => {
                             setKey(x);
-                            // if (x.length == 0) {
-                            //     setProduk(tmp)
-                            // } else {
-                            //     const filtered = produk.filter(i => i.nama_produk.toLowerCase().indexOf(x.toLowerCase()) > -1);
-                            //     setProduk(filtered);
-                            // }
+
 
                         }} />
 
@@ -222,17 +220,10 @@ export default function Transaksi({ navigation, route }) {
                 </View>
                 <TouchableOpacity onPress={() => {
                     ZavalabsScanner.showBarcodeReader(result => {
+                        console.log(result);
 
                         if (result !== null) {
-                            const filtered = produk.filter(i => i.barcode.toLowerCase().indexOf(result.toLowerCase()) > -1);
-                            // setProduk(filtered);
-                            console.log(filtered[0]);
-                            setPilih(filtered[0]);
-                            setModalVisible(true);
-                            // myInput.current.focus();
-                            setTimeout(() => {
-                                myInput.current.focus();
-                            }, 800)
+                            setKey(result);
                         }
 
                     });
@@ -262,10 +253,13 @@ export default function Transaksi({ navigation, route }) {
                     top: 10,
                     borderRadius: 10,
                 }}>
-                    <ScrollView showsVerticalScrollIndicator={false}>
-                        {produk.map(i => {
+                    <FlatList
+                        keyExtractor={(item, index) => index.toString()}
+                        initialNumToRender={10}
+                        maxToRenderPerBatch={5}
+                        data={filteredData} renderItem={({ item, index }) => {
                             return (
-                                <View key={i.id_produk} style={{
+                                <View key={item.id_produk} style={{
                                     marginVertical: 10,
                                     flexDirection: 'row',
                                     borderBottomWidth: 1,
@@ -276,17 +270,17 @@ export default function Transaksi({ navigation, route }) {
                                     <View style={{
                                         flex: 1,
                                     }}>
-                                        <Text >{i.nama_produk}</Text>
+                                        <Text >{item.nama_produk}</Text>
                                         <Text style={{
                                             fontFamily: fonts.secondary[400],
                                             fontSize: 10,
-                                        }}>{i.motor_lainnya}</Text>
+                                        }}>{item.motor_lainnya}</Text>
                                     </View>
-                                    <Text>Stok : {i.stok}</Text>
+                                    <Text>Stok : {item.stok}</Text>
                                     <TouchableOpacity style={{
                                         paddingHorizontal: 10,
                                     }} onPress={() => {
-                                        setPilih(i);
+                                        setPilih(item);
                                         // setKey('');
                                         setModalVisible(true);
                                         // myInput.current.focus();
@@ -298,9 +292,7 @@ export default function Transaksi({ navigation, route }) {
                                     </TouchableOpacity>
                                 </View>
                             )
-                        })}
-                        <MyGap jarak={40} />
-                    </ScrollView>
+                        }} />
 
                 </View>
 

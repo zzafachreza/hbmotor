@@ -23,6 +23,10 @@ import PrinterBluetooth from './PrinterBluetooth';
 import LaporanDetail from './LaporanDetail';
 import Laris from './Laris';
 import Laba from './Laba';
+import Sales from './Sales/Sales';
+import SalesAdd from './Sales/SalesAdd';
+import SalesEdit from './Sales/SalesEdit';
+
 
 // produk
 
@@ -67,6 +71,9 @@ export {
   Laporan,
   Minimal,
   PrinterBluetooth,
-  LaporanDetail
+  LaporanDetail,
+  Sales,
+  SalesAdd,
+  SalesEdit,
 
 };

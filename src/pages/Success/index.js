@@ -258,11 +258,11 @@ export default function Success({ navigation, route }) {
                         <Text style={{
                             flex: 1,
                             fontFamily: fonts.secondary[400],
-                            fontSize: 20,
+                            fontSize: 16,
                         }}>Pembayaran</Text>
                         <Text style={{
                             fontFamily: fonts.secondary[600],
-                            fontSize: 20,
+                            fontSize: 16,
                         }}>{trx.pembayaran}</Text>
                     </View>
                     <View style={{
@@ -272,11 +272,11 @@ export default function Success({ navigation, route }) {
                         <Text style={{
                             flex: 1,
                             fontFamily: fonts.secondary[400],
-                            fontSize: 20,
+                            fontSize: 16,
                         }}>Total Tagihan</Text>
                         <Text style={{
                             fontFamily: fonts.secondary[600],
-                            fontSize: 20,
+                            fontSize: 16,
                         }}>Rp {new Intl.NumberFormat().format(trx.total)}</Text>
                     </View>
                     <View style={{
@@ -286,11 +286,11 @@ export default function Success({ navigation, route }) {
                         <Text style={{
                             flex: 1,
                             fontFamily: fonts.secondary[400],
-                            fontSize: 20,
+                            fontSize: 16,
                         }}>Diterima</Text>
                         <Text style={{
                             fontFamily: fonts.secondary[600],
-                            fontSize: 20,
+                            fontSize: 16,
                         }}>Rp {new Intl.NumberFormat().format(trx.bayar)}</Text>
                     </View>
                     <View style={{
@@ -300,11 +300,11 @@ export default function Success({ navigation, route }) {
                         <Text style={{
                             flex: 1,
                             fontFamily: fonts.secondary[400],
-                            fontSize: 20,
+                            fontSize: 16,
                         }}>Kembalian</Text>
                         <Text style={{
                             fontFamily: fonts.secondary[600],
-                            fontSize: 20,
+                            fontSize: 16,
                         }}>Rp {new Intl.NumberFormat().format(trx.kembalian)}</Text>
                     </View>
 

@@ -42,11 +42,14 @@ export default function PenggunaEdit({ navigation, route }) {
     }
 
     useEffect(() => {
+
         setKirim({
             ...kirim,
             newfoto_user: null
         })
-    }, [])
+    }, []);
+
+
 
     return (
         <SafeAreaView style={{

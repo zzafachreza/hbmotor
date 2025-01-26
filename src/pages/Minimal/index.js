@@ -21,10 +21,6 @@ export default function Minimal({ navigation }) {
 
 
     const [data, setData] = useState([]);
-    const [tmp, setTemp] = useState([]);
-    const [filter, setFilter] = useState({
-        key: 'nama_produk',
-    })
     useEffect(() => {
 
         if (isFocused) {
@@ -34,37 +30,30 @@ export default function Minimal({ navigation }) {
 
     }, [isFocused]);
 
+    const [search, setSearch] = useState('');
+    const filteredData = data.filter(item => {
+        const values = Object.values(item);
+        return values.some(value => value.toLowerCase().includes(search.toLowerCase()));
+    });
+
+
 
     const getTransaction = () => {
         axios.post(apiURL + 'produk_minimal').then(res => {
-            console.log(res.data);
+
             setData(res.data);
-            setTemp(res.data);
         })
     }
 
-    const filterData = () => {
 
 
 
-        setModalVisible(false);
-
-    }
 
 
     const __renderItem = ({ item }) => {
 
         return (
-            <TouchableOpacity onPress={() => {
-                if (item.nama_supplier !== 'Tidak ada') {
-                    Linking.openURL('https://wa.me/' + item.telepon)
-                } else {
-                    showMessage({
-                        type: 'danger',
-                        message: 'Maaf supplier / sales belum di atur'
-                    })
-                }
-            }} style={{
+            <View style={{
                 borderBottomWidth: 1,
                 borderBottomColor: colors.zavalabs,
                 backgroundColor: colors.white,
@@ -223,7 +212,26 @@ export default function Minimal({ navigation }) {
                         </View>
                     </View>
                 </View>
-                <View style={{
+                <TouchableOpacity onPress={() => navigation.navigate('ProdukDetail', item)} style={{
+                    flex: 1,
+                    backgroundColor: colors.primary,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: 40,
+                }}>
+                    <Icon color={colors.white} type='ionicon' name='search' />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => {
+                    if (item.nama_supplier !== 'Tidak ada') {
+                        Linking.openURL('https://wa.me/' + item.telepon)
+                    } else {
+                        showMessage({
+                            type: 'danger',
+                            message: 'Maaf supplier / sales belum di atur'
+                        })
+                    }
+                }} style={{
+                    flex: 1,
                     backgroundColor: item.nama_supplier !== 'Tidak ada' ? colors.success : colors.secondary,
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -231,9 +239,9 @@ export default function Minimal({ navigation }) {
                 }}>
                     {item.nama_supplier == 'Tidak ada' && <Icon color={colors.white} type='ionicon' name='close' />}
                     {item.nama_supplier !== 'Tidak ada' && <Icon color={colors.white} type='ionicon' name='logo-whatsapp' />}
-                </View>
+                </TouchableOpacity>
 
-            </TouchableOpacity >
+            </View >
         )
 
     }
@@ -276,99 +284,22 @@ export default function Minimal({ navigation }) {
                         <TextInput placeholder='Cari Produk . . .' style={{
                             fontFamily: fonts.secondary[400],
                             fontSize: 18,
-                        }} onChangeText={x => {
-
-                            if (x.length == 0) {
-                                setData(tmp)
-                            } else {
-                                if (filter.key == 'nama_produk') {
-                                    const filtered = data.filter(i => i.nama_produk.toLowerCase().indexOf(x.toLowerCase()) > -1);
-                                    setData(filtered);
-                                } else if (filter.key == 'merek') {
-                                    console.log('merek')
-                                    const filtered = data.filter(i => i.merek.toLowerCase().indexOf(x.toLowerCase()) > -1);
-                                    setData(filtered);
-                                } else if (filter.key == 'motor_lainnya') {
-                                    const filtered = data.filter(i => i.motor_lainnya.toLowerCase().indexOf(x.toLowerCase()) > -1);
-                                    setData(filtered);
-                                }
-
-                            }
+                        }} onChangeText={x => setSearch(x)} />
 
 
-
-                        }} />
                     </View>
-                    <TouchableOpacity onPress={() => {
-                        setModalVisible(true)
-                    }} style={{
-                        borderBottomLeftRadius: 10,
-                        borderTopLeftRadius: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        padding: 10,
-                    }}>
-                        <Image source={require('../../assets/filter.png')} style={{
-                            width: 30,
-                            height: 30,
-                        }} />
-                    </TouchableOpacity>
+
                 </View>
-                <FlatList data={data} renderItem={__renderItem} />
+                <FlatList keyExtractor={(item, index) => index.toString()}
+                    initialNumToRender={10}
+                    maxToRenderPerBatch={5} data={filteredData} renderItem={__renderItem} />
             </View>
 
 
 
 
 
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    setModalVisible(!modalVisible);
-                }}>
-                <View style={{
-                    flex: 1,
-                    padding: 10,
-                    justifyContent: 'center',
-                    backgroundColor: '#000000BF'
-                }}>
-                    <View style={{
-                        height: windowHeight / 3,
-                        backgroundColor: colors.white,
-                        // padding: 10
-                    }}>
-                        <Text style={{
-                            fontFamily: fonts.secondary[600],
-                            fontSize: 20,
-                            textAlign: 'center',
-                            backgroundColor: colors.primary,
-                            padding: 10,
-                            color: colors.white,
-                            marginBottom: 10,
-                        }}>{MYAPP}</Text>
-                        <View style={{
-                            padding: 10,
-                            flex: 1,
-                        }}>
-                            <MyPicker label="Cari Berdasarkan Field" value={filter.key} iconname='ribbon' onValueChange={x => setFilter({ ...filter, key: x })} data={[
-                                { value: 'nama_produk', label: 'Nama Produk' },
-                                { value: 'merek', label: 'Merek' },
-                                { value: 'motor_lainnya', label: 'Motor Lainnya' },
 
-
-                            ]} />
-                            <MyGap jarak={10} />
-                        </View>
-                        <View style={{
-                            padding: 10,
-                        }}>
-                            <MyButton onPress={filterData} warna={colors.secondary} title="Filter Pencarian" Icons="filter" />
-                        </View>
-                    </View>
-                </View>
-            </Modal>
         </SafeAreaView >
     )
 }

@@ -25,6 +25,7 @@ import ZavalabsScanner from 'react-native-zavalabs-scanner'
 
 export default function ProdukEdit({ navigation, route }) {
 
+    console.log(route.params)
     const options = {
         includeBase64: true,
         quality: 1,
@@ -88,6 +89,15 @@ export default function ProdukEdit({ navigation, route }) {
                 })
             }
         })
+    }
+
+
+    useEffect(() => {
+        _getSupplier();
+    }, []);
+    const [supplier, setSupplier] = useState([]);
+    const _getSupplier = () => {
+        axios.post(apiURL + 'supplier').then(res => setSupplier(res.data));
     }
 
     return (
@@ -218,6 +228,29 @@ export default function ProdukEdit({ navigation, route }) {
 
                     <MyInput label="Minimum Stok" keyboardType='number-pad' iconname="download" placeholder="Masukan minimum stok" value={kirim.minimal} onChangeText={x => setKirim({ ...kirim, minimal: x })} />
                     <MyGap jarak={10} />
+
+                </View>
+
+                <View style={{
+                    padding: 10,
+                    backgroundColor: colors.white,
+                    marginVertical: 20,
+                    borderRadius: 10,
+                }}>
+                    <Text style={{
+                        fontFamily: fonts.secondary[600],
+                        fontSize: 20,
+                        marginBottom: 10,
+                    }}>Atur Supplier / Sales</Text>
+
+
+                    <MyPicker label="Supplier / Sales" iconname="business" value={kirim.fid_supplier} onValueChange={x => {
+                        setKirim({
+                            ...kirim,
+                            fid_supplier: x
+                        })
+                    }} data={supplier} />
+
 
                 </View>
 

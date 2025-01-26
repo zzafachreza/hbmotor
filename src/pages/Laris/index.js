@@ -19,40 +19,37 @@ export default function Laris({ navigation }) {
     const isFocused = useIsFocused();
 
 
-
+    const [loading, setLoading] = useState(true);
     const [data, setData] = useState([]);
-    const [tmp, setTemp] = useState([]);
-    const [filter, setFilter] = useState({
-        key: 'nama_produk',
-    })
+
     useEffect(() => {
 
         if (isFocused) {
             getTransaction();
         }
 
-
     }, [isFocused]);
+
+    const [search, setSearch] = useState('');
+    const filteredData = data.filter(item => {
+        const values = Object.values(item);
+        return values.some(value => value.toLowerCase().includes(search.toLowerCase()));
+    });
 
 
     const getTransaction = () => {
+        setLoading(true);
         axios.post(apiURL + 'produk_laris').then(res => {
             console.log(res.data);
+
             setData(res.data);
-            setTemp(res.data);
+            setLoading(false);
+
         })
     }
 
-    const filterData = () => {
 
-
-
-        setModalVisible(false);
-
-    }
-
-
-    const __renderItem = ({ item }) => {
+    const __renderItem = ({ item, index }) => {
 
         return (
             <TouchableOpacity onPress={() => navigation.navigate('ProdukDetail', item)} style={{
@@ -70,10 +67,12 @@ export default function Laris({ navigation }) {
                     justifyContent: 'center',
                     padding: 10,
                 }}>
+
                     <View style={{
                         flexDirection: 'row',
 
                     }}>
+
                         <Text style={{
                             flex: 1,
                             fontFamily: fonts.secondary[600],
@@ -146,98 +145,31 @@ export default function Laris({ navigation }) {
                             fontFamily: fonts.secondary[400],
                             fontSize: 18,
                         }} onChangeText={x => {
-
-                            if (x.length == 0) {
-                                setData(tmp)
-                            } else {
-                                if (filter.key == 'nama_produk') {
-                                    const filtered = data.filter(i => i.nama_produk.toLowerCase().indexOf(x.toLowerCase()) > -1);
-                                    setData(filtered);
-                                } else if (filter.key == 'merek') {
-                                    console.log('merek')
-                                    const filtered = data.filter(i => i.merek.toLowerCase().indexOf(x.toLowerCase()) > -1);
-                                    setData(filtered);
-                                } else if (filter.key == 'motor_lainnya') {
-                                    const filtered = data.filter(i => i.motor_lainnya.toLowerCase().indexOf(x.toLowerCase()) > -1);
-                                    setData(filtered);
-                                }
-
-                            }
+                            setSearch(x)
 
 
 
                         }} />
                     </View>
-                    <TouchableOpacity onPress={() => {
-                        setModalVisible(true)
-                    }} style={{
-                        borderBottomLeftRadius: 10,
-                        borderTopLeftRadius: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        padding: 10,
-                    }}>
-                        <Image source={require('../../assets/filter.png')} style={{
-                            width: 30,
-                            height: 30,
-                        }} />
-                    </TouchableOpacity>
+
                 </View>
-                <FlatList data={data} renderItem={__renderItem} />
+                {!loading && <FlatList keyExtractor={(item, index) => index.toString()}
+                    initialNumToRender={10}
+                    maxToRenderPerBatch={5} data={filteredData} renderItem={__renderItem} />}
+
+                {loading && <View style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <ActivityIndicator size="large" color={colors.primary} />
+                </View>}
             </View>
 
 
 
 
 
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    setModalVisible(!modalVisible);
-                }}>
-                <View style={{
-                    flex: 1,
-                    padding: 10,
-                    justifyContent: 'center',
-                    backgroundColor: '#000000BF'
-                }}>
-                    <View style={{
-                        height: windowHeight / 3,
-                        backgroundColor: colors.white,
-                        // padding: 10
-                    }}>
-                        <Text style={{
-                            fontFamily: fonts.secondary[600],
-                            fontSize: 20,
-                            textAlign: 'center',
-                            backgroundColor: colors.primary,
-                            padding: 10,
-                            color: colors.white,
-                            marginBottom: 10,
-                        }}>{MYAPP}</Text>
-                        <View style={{
-                            padding: 10,
-                            flex: 1,
-                        }}>
-                            <MyPicker label="Cari Berdasarkan Field" value={filter.key} iconname='ribbon' onValueChange={x => setFilter({ ...filter, key: x })} data={[
-                                { value: 'nama_produk', label: 'Nama Produk' },
-                                { value: 'merek', label: 'Merek' },
-                                { value: 'motor_lainnya', label: 'Motor Lainnya' },
-
-
-                            ]} />
-                            <MyGap jarak={10} />
-                        </View>
-                        <View style={{
-                            padding: 10,
-                        }}>
-                            <MyButton onPress={filterData} warna={colors.secondary} title="Filter Pencarian" Icons="filter" />
-                        </View>
-                    </View>
-                </View>
-            </Modal>
         </SafeAreaView >
     )
 }
