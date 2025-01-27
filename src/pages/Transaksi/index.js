@@ -146,9 +146,14 @@ export default function Transaksi({ navigation, route }) {
 
 
 
-    const filteredData = produk.filter(item => {
-        const values = Object.values(item);
-        return values.some(value => value.toLowerCase().includes(key.toLowerCase()));
+    const filteredData = produk.filter((item) => {
+        const lowerSearchText = key.toLowerCase();
+        const searchWords = lowerSearchText.split(" ").filter(Boolean);
+        return searchWords.every((word) => {
+            return Object.values(item).some((value) =>
+                value && value.toString().toLowerCase().includes(word)
+            );
+        });
     });
 
     const __getProduk = (x = key) => {
@@ -729,9 +734,9 @@ export default function Transaksi({ navigation, route }) {
 
                             }} label="Jenis Harga" iconname="options" data={[
                                 { label: 'Umum', value: 'Umum' },
-                                { label: 'Silver', value: 'Silver' },
-                                { label: 'Gold', value: 'Gold' },
-                                { label: 'Platinum', value: 'Platinum' },
+                                { label: 'Silver (Bengkel)', value: 'Silver' },
+                                { label: 'Gold (Partai Sedang)', value: 'Gold' },
+                                { label: 'Platinum (Partai Besar)', value: 'Platinum' },
 
                             ]} />
 

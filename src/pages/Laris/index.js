@@ -52,7 +52,7 @@ export default function Laris({ navigation }) {
     const __renderItem = ({ item, index }) => {
 
         return (
-            <TouchableOpacity onPress={() => navigation.navigate('ProdukDetail', item)} style={{
+            <TouchableOpacity style={{
                 borderBottomWidth: 1,
                 borderBottomColor: colors.zavalabs,
                 backgroundColor: colors.white,

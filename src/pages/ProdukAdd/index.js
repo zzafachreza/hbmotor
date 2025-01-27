@@ -28,6 +28,15 @@ export default function ProdukAdd({ navigation, route }) {
         quality: 1,
     };
 
+
+    useEffect(() => {
+        _getSupplier();
+    }, []);
+    const [supplier, setSupplier] = useState([]);
+    const _getSupplier = () => {
+        axios.post(apiURL + 'supplier').then(res => setSupplier(res.data));
+    }
+
     const getGallery = xyz => {
         launchImageLibrary(options, response => {
             // console.log('All Response = ', response);
@@ -79,6 +88,7 @@ export default function ProdukAdd({ navigation, route }) {
         stok: '',
         uom: 'Pcs',
         minimal: '',
+        fid_supplier: 0,
     });
     const [loading, setLoading] = useState(false);
     const sendServer = () => {
@@ -145,13 +155,13 @@ export default function ProdukAdd({ navigation, route }) {
                         fontSize: 20,
                         marginBottom: 10,
                     }}>Harga Partai</Text>
-                    <MyInput uang label="Bengkel" keyboardType='number-pad' iconname="pricetag" placeholder="Masukan partai silver" value={kirim.harga_silver} onChangeText={x => setKirim({ ...kirim, harga_silver: x })} />
+                    <MyInput uang label="Silver ( Bengkel )" keyboardType='number-pad' iconname="pricetag" placeholder="Masukan partai silver" value={kirim.harga_silver} onChangeText={x => setKirim({ ...kirim, harga_silver: x })} />
                     <MyGap jarak={10} />
 
-                    <MyInput uang label="Partai Sedang" keyboardType='number-pad' iconname="pricetag" placeholder="Masukan partai gold" value={kirim.harga_gold} onChangeText={x => setKirim({ ...kirim, harga_gold: x })} />
+                    <MyInput uang label="Gold ( Partai Sedang )" keyboardType='number-pad' iconname="pricetag" placeholder="Masukan partai gold" value={kirim.harga_gold} onChangeText={x => setKirim({ ...kirim, harga_gold: x })} />
                     <MyGap jarak={10} />
 
-                    <MyInput uang label="Partai Besar" keyboardType='number-pad' iconname="pricetag" placeholder="Masukan partai platinum" value={kirim.harga_platinum} onChangeText={x => setKirim({ ...kirim, harga_platinum: x })} />
+                    <MyInput uang label="Platinum (Partai Besar )" keyboardType='number-pad' iconname="pricetag" placeholder="Masukan partai platinum" value={kirim.harga_platinum} onChangeText={x => setKirim({ ...kirim, harga_platinum: x })} />
                     <MyGap jarak={10} />
 
                 </View>
@@ -233,6 +243,32 @@ export default function ProdukAdd({ navigation, route }) {
                     <MyGap jarak={10} />
 
                 </View>
+
+
+                <View style={{
+                    padding: 10,
+                    backgroundColor: colors.white,
+                    marginVertical: 20,
+                    borderRadius: 10,
+                }}>
+                    <Text style={{
+                        fontFamily: fonts.secondary[600],
+                        fontSize: 20,
+                        marginBottom: 10,
+                    }}>Atur Supplier / Sales</Text>
+
+
+                    <MyPicker label="Supplier / Sales" iconname="business" value={kirim.fid_supplier} onValueChange={x => {
+                        setKirim({
+                            ...kirim,
+                            fid_supplier: x
+                        })
+                    }} data={supplier} />
+
+
+                </View>
+
+
 
                 {loading && <ActivityIndicator color={colors.primary} size="large" />}
 

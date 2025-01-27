@@ -31,16 +31,19 @@ export default function Minimal({ navigation }) {
     }, [isFocused]);
 
     const [search, setSearch] = useState('');
-    const filteredData = data.filter(item => {
-        const values = Object.values(item);
-        return values.some(value => value.toLowerCase().includes(search.toLowerCase()));
+    const filteredData = data.filter((item) => {
+        const lowerSearchText = search.toLowerCase();
+        const searchWords = lowerSearchText.split(" ").filter(Boolean);
+        return searchWords.every((word) => {
+            return Object.values(item).some((value) =>
+                value && value.toString().toLowerCase().includes(word)
+            );
+        });
     });
-
 
 
     const getTransaction = () => {
         axios.post(apiURL + 'produk_minimal').then(res => {
-
             setData(res.data);
         })
     }
