@@ -19,6 +19,10 @@ import { Icon } from 'react-native-elements';
 
 export default function AAAtur({ navigation }) {
 
+    const testInfo = () => {
+        alert('aste')
+    }
+
     const btnKeluar = () => {
         Alert.alert(MYAPP, 'Apakah kamu yakin akan keluar ?', [
             {
@@ -174,6 +178,7 @@ export default function AAAtur({ navigation }) {
                     }}>Pengaturan Printer</Text>
                     <Icon type='ionicon' name='chevron-forward' color={colors.black} />
                 </TouchableOpacity>
+
 
             </View>
 
